@@ -399,3 +399,95 @@ function readAudit() {
     details: r[3]
   }));
 }
+function doPost(e) {
+  try {
+    var contents = JSON.parse(e.postData.contents);
+    var action = contents.action || contents.type;
+    
+    if (!action && contents.username && contents.password) {
+      action = "login";
+    }
+
+    switch (action) {
+      case "login":
+        return handleLogin(contents.username, contents.password);
+      case "verifyOtp":
+        return handleVerifyOtp(contents.otp);
+      case "addItem":
+        return handleAddItem(contents.item);
+      case "getItems":
+        return handleGetItems();
+      case "deleteItem":
+        return handleDeleteItem(contents.id);
+      default:
+        return responseJSON({ 
+          ok: false, 
+          message: "Action not recognized. Received payload: " + JSON.stringify(contents) 
+        });
+    }
+  } catch (err) {
+    return responseJSON({ ok: false, message: "Error: " + err.toString() });
+  }
+}
+
+function handleAddItem(item) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Inventory");
+  var id = item.id || "ITEM-" + Date.now();
+  
+  sheet.appendRow([
+    id,
+    item.name,
+    item.category,
+    Number(item.quantity),
+    Number(item.reorderLevel),
+    Number(item.unitCost),
+    new Date()
+  ]);
+  
+  logAudit("ADD_ITEM", "Added item: " + item.name);
+  return responseJSON({ ok: true, message: "Item added successfully!" });
+}
+
+function handleGetItems() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Inventory");
+  var data = sheet.getDataRange().getValues();
+  var items = [];
+  
+  for (var i = 1; i < data.length; i++) {
+    items.push({
+      id: data[i][0],
+      name: data[i][1],
+      category: data[i][2],
+      quantity: data[i][3],
+      reorderLevel: data[i][4],
+      unitCost: data[i][5]
+    });
+  }
+  return responseJSON({ ok: true, items: items });
+}
+
+function handleDeleteItem(id) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Inventory");
+  var data = sheet.getDataRange().getValues();
+  
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0].toString() === id.toString()) {
+      sheet.deleteRow(i + 1);
+      logAudit("DELETE_ITEM", "Deleted item ID: " + id);
+      return responseJSON({ ok: true, message: "Item deleted successfully" });
+    }
+  }
+  return responseJSON({ ok: false, message: "Item not found" });
+}
+
+function logAudit(action, details) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("AuditLog");
+    sheet.appendRow([new Date(), "manager", action, details]);
+  } catch(e) {}
+}
+
+function responseJSON(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
