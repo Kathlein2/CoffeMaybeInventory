@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coffee Maybe Inventory</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="container">
+    <section id="loginPage" class="card login-card">
+      <h1>Coffee Maybe</h1>
+      <p class="muted">Inventory Manager Portal</p>
+
+      <form id="loginForm">
+        <label>Username</label>
+        <input id="username" required autocomplete="username">
+
+        <label>Password</label>
+        <input id="password" type="password" required autocomplete="current-password">
+
+        <button type="submit">Log In</button>
+      </form>
+
+      <div id="loginMessage" class="message"></div>
+    </section>
+
+    <section id="otpPage" class="card login-card hidden">
+      <h1>Verification</h1>
+      <p class="muted">Enter the verification code sent to the Inventory Manager.</p>
+
+      <form id="otpForm">
+        <label>Verification Code</label>
+        <input id="otp" inputmode="numeric" maxlength="6" required>
+        <button type="submit">Verify</button>
+      </form>
+
+      <div id="otpMessage" class="message"></div>
+    </section>
+
+    <section id="appPage" class="hidden">
+      <header class="topbar">
+        <div>
+          <h1>Coffee Maybe Inventory</h1>
+          <span id="userBadge" class="badge"></span>
+        </div>
+        <button id="logoutBtn" class="secondary">Log Out</button>
+      </header>
+
+      <div id="appMessage" class="message"></div>
+
+      <section class="stats">
+        <div class="stat card"><span>Total Items</span><strong id="totalItems">0</strong></div>
+        <div class="stat card"><span>Low Stock</span><strong id="lowStock">0</strong></div>
+        <div class="stat card"><span>Total Units</span><strong id="totalUnits">0</strong></div>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <h2>Inventory</h2>
+          <button id="addBtn">Add Item</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Reorder Level</th>
+                <th>Unit Cost</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <h2>System Configuration</h2>
+        </div>
+
+        <form id="configForm" class="grid-form">
+          <div>
+            <label>Low-stock threshold</label>
+            <input id="lowStockThreshold" type="number" min="0" required>
+          </div>
+          <div class="align-end">
+            <button type="submit">Save Configuration</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <h2>Audit Log</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date/Time</th>
+                <th>User</th>
+                <th>Action</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody id="auditBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="itemDialog">
+    <form method="dialog" id="itemForm" class="dialog-form">
+      <h2 id="dialogTitle">Add Inventory Item</h2>
+      <input id="itemId" type="hidden">
+
+      <label>Item name</label>
+      <input id="itemName" required>
+
+      <label>Category</label>
+      <input id="itemCategory" required>
+
+      <label>Quantity</label>
+      <input id="itemQuantity" type="number" min="0" required>
+
+      <label>Reorder level</label>
+      <input id="itemReorder" type="number" min="0" required>
+
+      <label>Unit cost</label>
+      <input id="itemCost" type="number" min="0" step="0.01" required>
+
+      <div class="dialog-actions">
+        <button type="button" id="cancelDialog" class="secondary">Cancel</button>
+        <button type="submit">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="/app.js"></script>
+</body>
+</html>

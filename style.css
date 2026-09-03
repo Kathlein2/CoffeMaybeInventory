@@ -1,0 +1,143 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f1ec;
+  color: #2f2925;
+}
+
+.container {
+  width: min(1200px, 94%);
+  margin: 30px auto;
+}
+
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 18px rgba(0,0,0,.07);
+}
+
+.login-card {
+  max-width: 430px;
+  margin: 10vh auto;
+}
+
+h1, h2 { margin-top: 0; }
+
+.muted { color: #777; }
+
+label {
+  display: block;
+  margin: 12px 0 6px;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 11px 16px;
+  cursor: pointer;
+  font-weight: 700;
+  background: #5b3a29;
+  color: white;
+}
+
+button.secondary {
+  background: #e9e5e1;
+  color: #3a332f;
+}
+
+form button { margin-top: 16px; }
+
+.topbar, .section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.badge {
+  display: inline-block;
+  background: #eee;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.stat span, .stat strong { display: block; }
+.stat span { color: #777; }
+.stat strong { font-size: 30px; margin-top: 7px; }
+
+.table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 750px;
+}
+
+th, td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.low { font-weight: 700; }
+
+.message {
+  margin-top: 12px;
+  min-height: 20px;
+  color: #9b2c2c;
+}
+
+.hidden { display: none !important; }
+
+.grid-form {
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  gap: 20px;
+}
+
+.align-end { display: flex; align-items: end; }
+.align-end button { width: 100%; }
+
+dialog {
+  border: 0;
+  border-radius: 14px;
+  padding: 0;
+  width: min(450px, 92%);
+  box-shadow: 0 15px 50px rgba(0,0,0,.25);
+}
+
+dialog::backdrop { background: rgba(0,0,0,.45); }
+
+.dialog-form { padding: 24px; }
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 700px) {
+  .stats { grid-template-columns: 1fr; }
+  .grid-form { grid-template-columns: 1fr; }
+  .topbar { align-items: flex-start; }
+}
