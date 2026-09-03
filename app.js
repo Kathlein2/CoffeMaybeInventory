@@ -1,245 +1,213 @@
-let state = {
-  token: localStorage.getItem("cm_token"),
-  username: localStorage.getItem("cm_username"),
-  items: []
-};
+const API_URL = '/api/apps-script';
+let currentInventory = [];
+let selectedItemId = null;
 
-const $ = id => document.getElementById(id);
-
-async function api(action, data = {}) {
-  const response = await fetch("/api/apps-script", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      action,
-      token: state.token,
-      ...data
-    })
+// Page View Navigation
+function showView(viewId) {
+  document.querySelectorAll('.page-view').forEach(view => {
+    view.classList.remove('active');
   });
-
-  const result = await response.json();
-
-  if (!result.ok && result.authRequired) {
-    logout();
-    throw new Error(result.message || "Session expired.");
+  const targetView = document.getElementById(viewId);
+  if (targetView) {
+    targetView.classList.add('active');
   }
-
-  return result;
+  
+  if (viewId === 'view-inventory' || viewId === 'view-dashboard') {
+    loadInventoryData();
+  }
 }
 
-function showMessage(id, text, ok = false) {
-  const el = $(id);
-  el.textContent = text || "";
-  el.style.color = ok ? "#287a3e" : "#9b2c2c";
-}
-
-function show(page) {
-  ["loginPage", "otpPage", "appPage"].forEach(id => $(id).classList.add("hidden"));
-  $(page).classList.remove("hidden");
-}
-
-async function login(event) {
-  event.preventDefault();
-  showMessage("loginMessage", "Checking login...");
+// 1. Authentication Handlers
+async function handleLoginSubmit() {
+  const username = document.getElementById('login-username').value;
+  const password = document.getElementById('login-password').value;
 
   try {
-    const result = await api("login", {
-      username: $("username").value.trim(),
-      password: $("password").value
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'login', username, password })
     });
+    const result = await response.json();
 
-    if (!result.ok) {
-      showMessage("loginMessage", result.message);
-      return;
+    if (result.ok) {
+      document.getElementById('login-step-1').classList.add('hidden');
+      document.getElementById('login-step-2').classList.remove('hidden');
+      alert('OTP code sent to your email!');
+    } else {
+      alert(result.message || 'Login failed.');
     }
-
-    state.username = $("username").value.trim();
-    localStorage.setItem("cm_username", state.username);
-    state.token = result.pendingToken;
-
-    show("otpPage");
-    showMessage("otpMessage", result.message, true);
-  } catch (e) {
-    showMessage("loginMessage", e.message);
+  } catch (err) {
+    alert('Error connecting to backend: ' + err.message);
   }
 }
 
-async function verifyOtp(event) {
-  event.preventDefault();
-  showMessage("otpMessage", "Verifying...");
+async function handleVerifyOtpSubmit() {
+  const otp = document.getElementById('login-otp').value;
 
   try {
-    const result = await api("verifyOtp", {
-      pendingToken: state.token,
-      otp: $("otp").value.trim()
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'verifyOtp', otp })
     });
+    const result = await response.json();
 
-    if (!result.ok) {
-      showMessage("otpMessage", result.message);
-      return;
+    if (result.ok) {
+      showView('view-dashboard');
+    } else {
+      alert(result.message || 'Invalid OTP code.');
     }
-
-    state.token = result.token;
-    localStorage.setItem("cm_token", state.token);
-    show("appPage");
-    $("userBadge").textContent = "Inventory Manager: " + state.username;
-    await loadDashboard();
-  } catch (e) {
-    showMessage("otpMessage", e.message);
+  } catch (err) {
+    alert('Error verifying OTP: ' + err.message);
   }
 }
 
-async function loadDashboard() {
-  const result = await api("dashboard");
-  if (!result.ok) {
-    showMessage("appMessage", result.message);
+// 2. Fetch & Render Inventory Data
+async function loadInventoryData() {
+  try {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'getItems' })
+    });
+    const result = await response.json();
+
+    if (result.ok) {
+      currentInventory = result.items || [];
+      renderInventoryList(currentInventory);
+      updateDashboardStats(currentInventory);
+      populateTransactionDropdowns(currentInventory);
+    }
+  } catch (err) {
+    console.error('Failed to fetch inventory:', err);
+  }
+}
+
+function renderInventoryList(items) {
+  const container = document.getElementById('inventory-list-container');
+  if (!container) return;
+  
+  container.innerHTML = '';
+  
+  if (items.length === 0) {
+    container.innerHTML = '<div class="item-row">No items found.</div>';
     return;
   }
-
-  state.items = result.inventory || [];
-  renderInventory(result.inventory || []);
-  renderAudit(result.audit || []);
-
-  $("lowStockThreshold").value = result.config.lowStockThreshold;
-  updateStats(result.inventory || [], Number(result.config.lowStockThreshold));
-}
-
-function updateStats(items, threshold) {
-  $("totalItems").textContent = items.length;
-  $("lowStock").textContent = items.filter(x => Number(x.quantity) <= threshold).length;
-  $("totalUnits").textContent = items.reduce((sum, x) => sum + Number(x.quantity || 0), 0);
-}
-
-function renderInventory(items) {
-  const body = $("inventoryBody");
-  body.innerHTML = "";
 
   items.forEach(item => {
-    const row = document.createElement("tr");
-    const low = Number(item.quantity) <= Number($("lowStockThreshold").value || 0);
-
+    const row = document.createElement('div');
+    row.className = 'item-row';
+    if (selectedItemId === item.id) row.style.borderColor = '#000';
+    
+    const isLow = Number(item.quantity) <= Number(item.reorderLevel || 2);
+    const statusText = isLow ? 'low stock' : 'In Stock';
+    
     row.innerHTML = `
-      <td>${escapeHtml(item.name)}</td>
-      <td>${escapeHtml(item.category)}</td>
-      <td class="${low ? "low" : ""}">${item.quantity}</td>
-      <td>${item.reorderLevel}</td>
-      <td>₱${Number(item.unitCost).toFixed(2)}</td>
-      <td>
-        <button onclick="editItem('${item.id}')">Edit</button>
-        <button class="secondary" onclick="deleteItem('${item.id}')">Delete</button>
-      </td>
+      <span><strong>${item.name}</strong></span>
+      <span>${item.quantity}</span>
+      <span>${item.unitCost || 'pcs'}</span>
+      <span style="color: ${isLow ? 'red' : 'green'}; font-weight: bold;">${statusText}</span>
     `;
-    body.appendChild(row);
+    
+    row.onclick = () => {
+      selectedItemId = item.id;
+      renderInventoryList(items);
+    };
+    
+    container.appendChild(row);
   });
 }
 
-function renderAudit(rows) {
-  $("auditBody").innerHTML = rows.map(r => `
-    <tr>
-      <td>${escapeHtml(r.datetime)}</td>
-      <td>${escapeHtml(r.username)}</td>
-      <td>${escapeHtml(r.action)}</td>
-      <td>${escapeHtml(r.details)}</td>
-    </tr>
-  `).join("");
-}
+function updateDashboardStats(items) {
+  const totalItems = items.length;
+  const lowStockItems = items.filter(i => Number(i.quantity) <= Number(i.reorderLevel || 2)).length;
 
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
-  }[c]));
-}
-
-$("addBtn").addEventListener("click", () => {
-  $("itemForm").reset();
-  $("itemId").value = "";
-  $("dialogTitle").textContent = "Add Inventory Item";
-  $("itemDialog").showModal();
-});
-
-$("cancelDialog").addEventListener("click", () => $("itemDialog").close());
-
-$("itemForm").addEventListener("submit", async event => {
-  event.preventDefault();
-
-  const data = {
-    id: $("itemId").value,
-    name: $("itemName").value.trim(),
-    category: $("itemCategory").value.trim(),
-    quantity: Number($("itemQuantity").value),
-    reorderLevel: Number($("itemReorder").value),
-    unitCost: Number($("itemCost").value)
-  };
-
-  const result = await api(data.id ? "updateItem" : "addItem", { item: data });
-
-  if (!result.ok) {
-    alert(result.message);
-    return;
+  if (document.getElementById('stat-total-items')) {
+    document.getElementById('stat-total-items').innerText = totalItems;
   }
+  if (document.getElementById('stat-low-stock')) {
+    document.getElementById('stat-low-stock').innerText = lowStockItems;
+  }
+}
 
-  $("itemDialog").close();
-  showMessage("appMessage", "Inventory saved.", true);
-  await loadDashboard();
-});
+// 3. Transactions (Stock In / Stock Out)
+function openTransaction(type) {
+  showView('view-transaction');
+  const typeSelect = document.getElementById('trans-type');
+  if (typeSelect) typeSelect.value = type;
+  updateStockCalculations();
+}
 
-window.editItem = function(id) {
-  const item = state.items.find(x => String(x.id) === String(id));
+function populateTransactionDropdowns(items) {
+  const select = document.getElementById('trans-item-select');
+  if (!select) return;
+  select.innerHTML = '';
+  items.forEach(item => {
+    const opt = document.createElement('option');
+    opt.value = item.id;
+    opt.textContent = item.name;
+    select.appendChild(opt);
+  });
+  updateStockCalculations();
+}
+
+function updateStockCalculations() {
+  const select = document.getElementById('trans-item-select');
+  if (!select || !select.value) return;
+  
+  const item = currentInventory.find(i => i.id.toString() === select.value.toString());
   if (!item) return;
 
-  $("itemId").value = item.id;
-  $("itemName").value = item.name;
-  $("itemCategory").value = item.category;
-  $("itemQuantity").value = item.quantity;
-  $("itemReorder").value = item.reorderLevel;
-  $("itemCost").value = item.unitCost;
-  $("dialogTitle").textContent = "Edit Inventory Item";
-  $("itemDialog").showModal();
-};
+  const currentQty = Number(item.quantity);
+  const transQty = Number(document.getElementById('trans-qty').value || 0);
+  const type = document.getElementById('trans-type').value;
 
-window.deleteItem = async function(id) {
-  if (!confirm("Delete this inventory item?")) return;
+  const updatedQty = type === 'Stock In' ? currentQty + transQty : currentQty - transQty;
 
-  const result = await api("deleteItem", { id });
-  if (!result.ok) {
-    alert(result.message);
-    return;
-  }
-
-  showMessage("appMessage", "Item deleted.", true);
-  await loadDashboard();
-};
-
-$("configForm").addEventListener("submit", async event => {
-  event.preventDefault();
-
-  const result = await api("updateConfig", {
-    lowStockThreshold: Number($("lowStockThreshold").value)
-  });
-
-  showMessage("appMessage", result.message, result.ok);
-  if (result.ok) await loadDashboard();
-});
-
-$("logoutBtn").addEventListener("click", logout);
-
-function logout() {
-  state.token = null;
-  state.username = null;
-  localStorage.removeItem("cm_token");
-  localStorage.removeItem("cm_username");
-  $("loginForm").reset();
-  $("otpForm").reset();
-  show("loginPage");
+  document.getElementById('calc-current-stock').innerText = `${currentQty} ${item.unitCost || 'units'}`;
+  document.getElementById('calc-updated-stock').innerText = `${updatedQty} ${item.unitCost || 'units'}`;
 }
 
-$("loginForm").addEventListener("submit", login);
-$("otpForm").addEventListener("submit", verifyOtp);
+async function submitTransaction() {
+  const select = document.getElementById('trans-item-select');
+  if (!select.value) return;
 
-if (state.token && state.username) {
-  show("appPage");
-  $("userBadge").textContent = "Inventory Manager: " + state.username;
-  loadDashboard().catch(() => logout());
-} else {
-  show("loginPage");
+  const item = currentInventory.find(i => i.id.toString() === select.value.toString());
+  const transQty = Number(document.getElementById('trans-qty').value || 0);
+  const type = document.getElementById('trans-type').value;
+
+  const updatedQty = type === 'Stock In' ? Number(item.quantity) + transQty : Number(item.quantity) - transQty;
+
+  try {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'addItem',
+        item: {
+          id: item.id,
+          name: item.name,
+          category: item.category || 'General',
+          quantity: updatedQty,
+          reorderLevel: item.reorderLevel || 2,
+          unitCost: item.unitCost || 0
+        }
+      })
+    });
+    
+    const res = await response.json();
+    if (res.ok) {
+      alert('Transaction completed successfully!');
+      showView('view-dashboard');
+    } else {
+      alert('Transaction failed: ' + res.message);
+    }
+  } catch (err) {
+    alert('Error submitting transaction: ' + err.message);
+  }
+}
+
+function logout() {
+  location.reload();
 }
