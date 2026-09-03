@@ -4,144 +4,230 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coffee Maybe Inventory</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="container">
-    <section id="loginPage" class="card login-card">
-      <h1>Coffee Maybe</h1>
-      <p class="muted">Inventory Manager Portal</p>
 
-      <form id="loginForm">
-        <label>Username</label>
-        <input id="username" required autocomplete="username">
-
-        <label>Password</label>
-        <input id="password" type="password" required autocomplete="current-password">
-
-        <button type="submit">Log In</button>
-      </form>
-
-      <div id="loginMessage" class="message"></div>
-    </section>
-
-    <section id="otpPage" class="card login-card hidden">
-      <h1>Verification</h1>
-      <p class="muted">Enter the verification code sent to the Inventory Manager.</p>
-
-      <form id="otpForm">
-        <label>Verification Code</label>
-        <input id="otp" inputmode="numeric" maxlength="6" required>
-        <button type="submit">Verify</button>
-      </form>
-
-      <div id="otpMessage" class="message"></div>
-    </section>
-
-    <section id="appPage" class="hidden">
-      <header class="topbar">
-        <div>
-          <h1>Coffee Maybe Inventory</h1>
-          <span id="userBadge" class="badge"></span>
-        </div>
-        <button id="logoutBtn" class="secondary">Log Out</button>
-      </header>
-
-      <div id="appMessage" class="message"></div>
-
-      <section class="stats">
-        <div class="stat card"><span>Total Items</span><strong id="totalItems">0</strong></div>
-        <div class="stat card"><span>Low Stock</span><strong id="lowStock">0</strong></div>
-        <div class="stat card"><span>Total Units</span><strong id="totalUnits">0</strong></div>
-      </section>
-
-      <section class="card">
-        <div class="section-title">
-          <h2>Inventory</h2>
-          <button id="addBtn">Add Item</button>
-        </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Category</th>
-                <th>Quantity</th>
-                <th>Reorder Level</th>
-                <th>Unit Cost</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="inventoryBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="section-title">
-          <h2>System Configuration</h2>
-        </div>
-
-        <form id="configForm" class="grid-form">
-          <div>
-            <label>Low-stock threshold</label>
-            <input id="lowStockThreshold" type="number" min="0" required>
-          </div>
-          <div class="align-end">
-            <button type="submit">Save Configuration</button>
-          </div>
-        </form>
-      </section>
-
-      <section class="card">
-        <div class="section-title">
-          <h2>Audit Log</h2>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Date/Time</th>
-                <th>User</th>
-                <th>Action</th>
-                <th>Details</th>
-              </tr>
-            </thead>
-            <tbody id="auditBody"></tbody>
-          </table>
-        </div>
-      </section>
-    </section>
-  </main>
-
-  <dialog id="itemDialog">
-    <form method="dialog" id="itemForm" class="dialog-form">
-      <h2 id="dialogTitle">Add Inventory Item</h2>
-      <input id="itemId" type="hidden">
-
-      <label>Item name</label>
-      <input id="itemName" required>
-
-      <label>Category</label>
-      <input id="itemCategory" required>
-
-      <label>Quantity</label>
-      <input id="itemQuantity" type="number" min="0" required>
-
-      <label>Reorder level</label>
-      <input id="itemReorder" type="number" min="0" required>
-
-      <label>Unit cost</label>
-      <input id="itemCost" type="number" min="0" step="0.01" required>
-
-      <div class="dialog-actions">
-        <button type="button" id="cancelDialog" class="secondary">Cancel</button>
-        <button type="submit">Save</button>
+  <!-- VIEW 1: LOGIN -->
+  <div id="view-login" class="page-view active">
+    <div class="login-container">
+      <div class="logo-box">
+        <div class="coffee-cup-icon">☕</div>
+        <h1>Coffee Maybe<br>Inventory</h1>
       </div>
-    </form>
-  </dialog>
+      
+      <div id="login-step-1">
+        <div class="input-group">
+          <span class="icon">👤</span>
+          <input type="text" id="login-username" placeholder="Username">
+        </div>
+        <div class="input-group">
+          <span class="icon">🔒</span>
+          <input type="password" id="login-password" placeholder="Password">
+        </div>
+        <button class="btn btn-primary" onclick="handleLoginSubmit()">LOGIN</button>
+        <p class="sub-text">A verification code will send after login</p>
+      </div>
 
-  <script src="/app.js"></script>
+      <div id="login-step-2" class="hidden">
+        <hr class="divider">
+        <h3>VERIFICATION CODE</h3>
+        <div class="input-group">
+          <input type="text" id="login-otp" placeholder="Enter Verification Code">
+        </div>
+        <button class="btn btn-primary" onclick="handleVerifyOtpSubmit()">VERIFY</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 2: DASHBOARD HUB -->
+  <div id="view-dashboard" class="page-view">
+    <header class="top-bar">
+      <button class="icon-btn">☰</button>
+      <h2>Coffee Maybe Inventory</h2>
+      <button class="icon-btn profile-btn">👤</button>
+    </header>
+
+    <div class="content">
+      <div class="welcome-card">
+        Welcome, Inventory Manager
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-icon">📦</span>
+        <div class="stat-info">
+          <span>total items</span>
+          <strong id="stat-total-items">0</strong>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-icon">⚠️</span>
+        <div class="stat-info">
+          <span>low stock items</span>
+          <strong id="stat-low-stock">0</strong>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-icon">📋</span>
+        <div class="stat-info">
+          <span>recent transaction</span>
+          <strong id="stat-transactions">0</strong>
+        </div>
+      </div>
+
+      <div class="nav-grid">
+        <button class="grid-card" onclick="showView('view-inventory')">
+          <span class="grid-icon">📦</span>
+          <span>INVENTORY</span>
+        </button>
+        <button class="grid-card" onclick="openTransaction('Stock In')">
+          <span class="grid-icon">📥</span>
+          <span>STOCK IN</span>
+        </button>
+        <button class="grid-card" onclick="openTransaction('Stock Out')">
+          <span class="grid-icon">📤</span>
+          <span>STOCK OUT</span>
+        </button>
+        <button class="grid-card" onclick="showView('view-history')">
+          <span class="grid-icon">🕒</span>
+          <span>HISTORY</span>
+        </button>
+      </div>
+
+      <button class="btn btn-outline logout-btn" onclick="logout()">
+        🚪 LOGOUT
+      </button>
+    </div>
+  </div>
+
+  <!-- VIEW 3: INVENTORY LIST -->
+  <div id="view-inventory" class="page-view">
+    <header class="top-bar">
+      <button class="icon-btn" onclick="showView('view-dashboard')">←</button>
+      <h2>Inventory</h2>
+      <button class="icon-btn" onclick="openAddModal()">＋</button>
+    </header>
+
+    <div class="content">
+      <div class="search-box">
+        🔍 <input type="text" id="inventory-search" placeholder="Search Item.." oninput="filterInventory()">
+      </div>
+
+      <div class="table-header">
+        <span>ITEM NAME</span>
+        <span>QTY</span>
+        <span>UNIT</span>
+        <span>STATUS</span>
+      </div>
+
+      <div id="inventory-list-container" class="item-list">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="action-buttons-row">
+        <button class="btn btn-card" onclick="openAddModal()">➕<br>ADD</button>
+        <button class="btn btn-card" onclick="openEditModal()">✏️<br>EDIT</button>
+        <button class="btn btn-card" onclick="deleteSelectedItem()">🗑️<br>DELETE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 4: TRANSACTION (STOCK IN / OUT) -->
+  <div id="view-transaction" class="page-view">
+    <header class="top-bar">
+      <button class="icon-btn" onclick="showView('view-dashboard')">←</button>
+      <h2>Inventory Transaction</h2>
+    </header>
+
+    <div class="content">
+      <div class="form-group">
+        <label>SELECT ITEM</label>
+        <select id="trans-item-select" onchange="updateStockCalculations()"></select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-2">
+          <label>QUANTITY</label>
+          <input type="number" id="trans-qty" value="1" min="1" oninput="updateStockCalculations()">
+        </div>
+        <div class="form-group flex-1">
+          <label>&nbsp;</label>
+          <select id="trans-unit">
+            <option>kg</option>
+            <option>L</option>
+            <option>packs</option>
+            <option>bottles</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>TRANSACTION TYPE</label>
+        <select id="trans-type" onchange="updateStockCalculations()">
+          <option value="Stock In">Stock In</option>
+          <option value="Stock Out">Stock Out</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>REASON</label>
+        <select id="trans-reason">
+          <option>New Delivery</option>
+          <option>Drink preparation</option>
+          <option>Spoilage / Expired</option>
+          <option>Inventory Adjustment</option>
+        </select>
+      </div>
+
+      <hr class="divider">
+
+      <div class="stock-calc-row">
+        <span>CURRENT STOCK</span>
+        <div class="calc-badge" id="calc-current-stock">0 L</div>
+      </div>
+
+      <div class="stock-calc-row">
+        <span>UPDATED STOCK</span>
+        <div class="calc-badge" id="calc-updated-stock">0 L</div>
+      </div>
+
+      <button class="btn btn-primary" onclick="submitTransaction()">CONFIRM TRANSACTION</button>
+    </div>
+  </div>
+
+  <!-- VIEW 5: HISTORY -->
+  <div id="view-history" class="page-view">
+    <header class="top-bar">
+      <button class="icon-btn" onclick="showView('view-dashboard')">←</button>
+      <h2>Inventory History</h2>
+    </header>
+
+    <div class="content">
+      <div class="search-filter-row">
+        <div class="search-box flex-1">
+          🔍 <input type="text" placeholder="Search Item..">
+        </div>
+        <button class="btn btn-outline filter-btn">🌪️ Filter</button>
+      </div>
+
+      <div class="table-header history-header">
+        <span>DATE & TIME</span>
+        <span>ITEM</span>
+        <span>TYPE</span>
+        <span>QTY</span>
+        <span>REASON</span>
+      </div>
+
+      <div id="history-list-container" class="item-list">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <button class="btn btn-primary" onclick="showView('view-dashboard')">BACK</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
