@@ -85,6 +85,11 @@ body {
   flex-direction: column;
   gap: 20px;
 }
+.login-container, .btn {
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 10;
+}
 
 .logo-box h1 {
   font-size: 1.8rem;
