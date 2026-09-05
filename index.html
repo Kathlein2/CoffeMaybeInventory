@@ -48,17 +48,101 @@
           <h1>Coffee Maybe</h1>
           <p>INVENTORY SYSTEM</p>
         </div>
+
+        <div class="user-profile-card">
+          <div class="avatar" style="background: var(--accent-brown, #8b5a36); width: 36px; height: 36px; border-radius: 50%;"></div>
+          <div class="user-info">
+            <h4 style="color: #fff; font-size: 0.9rem;">Manager</h4>
+            <span style="font-size: 0.75rem; color: var(--accent-gold, #c6a27e);">Inventory Manager</span>
+          </div>
+        </div>
+
         <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 20px;">
           <li><button class="btn-sign-in" onclick="showView('view-dashboard')">📊 Dashboard</button></li>
           <li><button class="btn-sign-in" onclick="showView('view-inventory')">📦 Inventory</button></li>
+          <li><button class="btn-sign-in" onclick="openTransaction('Stock In')">📥 Stock In</button></li>
+          <li><button class="btn-sign-in" onclick="openTransaction('Stock Out')">📤 Stock Out</button></li>
         </ul>
       </div>
       <button class="btn-sign-in" onclick="logout()">🚪 Logout</button>
     </aside>
 
     <main class="main-content">
-      <h2>Welcome, Manager! ☕</h2>
-      <p>Your dashboard is ready.</p>
+      <div class="hero-banner" style="background: #2a1f1a; color: #fff; padding: 24px; border-radius: 12px; margin-bottom: 24px;">
+        <h2 style="font-family: Georgia, serif; font-size: 1.8rem;">Good evening, Manager! ☕</h2>
+        <p style="color: var(--sidebar-text, #d4c3b3); margin-top: 4px;">Here's what's happening in your coffee inventory today.</p>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <div class="stat-card" style="background: #fff; padding: 18px; border-radius: 12px; border: 1px solid #e8ded5; display: flex; align-items: center; gap: 14px;">
+          <div style="font-size: 1.5rem; background: #2b1d16; color: #c6a27e; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">📦</div>
+          <div>
+            <div id="stat-total-items" style="font-size: 1.4rem; font-weight: 700;">42</div>
+            <div style="font-size: 0.8rem; color: #7a6e65;">Total Items</div>
+          </div>
+        </div>
+
+        <div class="stat-card" style="background: #fff; padding: 18px; border-radius: 12px; border: 1px solid #e8ded5; display: flex; align-items: center; gap: 14px;">
+          <div style="font-size: 1.5rem; background: #2b1d16; color: #c6a27e; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">⚠️</div>
+          <div>
+            <div id="stat-low-stock" style="font-size: 1.4rem; font-weight: 700;">6</div>
+            <div style="font-size: 0.8rem; color: #7a6e65;">Low Stock Items</div>
+          </div>
+        </div>
+
+        <div class="stat-card" style="background: #fff; padding: 18px; border-radius: 12px; border: 1px solid #e8ded5; display: flex; align-items: center; gap: 14px;">
+          <div style="font-size: 1.5rem; background: #2b1d16; color: #c6a27e; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">📋</div>
+          <div>
+            <div id="stat-transactions" style="font-size: 1.4rem; font-weight: 700;">18</div>
+            <div style="font-size: 0.8rem; color: #7a6e65;">Today's Transactions</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Tables Grid -->
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+        <div style="background: #fff; border-radius: 12px; padding: 20px; border: 1px solid #e8ded5;">
+          <h3 style="font-family: Georgia, serif; margin-bottom: 16px;">☕ Inventory Overview</h3>
+          <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+              <tr style="border-bottom: 1px solid #e8ded5; color: #8c7e73; font-size: 0.85rem;">
+                <th style="padding: 10px;">Item Name</th>
+                <th style="padding: 10px;">Category</th>
+                <th style="padding: 10px;">Quantity</th>
+                <th style="padding: 10px;">Unit</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-inventory-rows">
+              <tr style="border-bottom: 1px solid #f2ebe4;">
+                <td style="padding: 12px 10px; font-weight: 600;">Arabica Beans</td>
+                <td style="padding: 12px 10px; color: #666;">Coffee Beans</td>
+                <td style="padding: 12px 10px;">25</td>
+                <td style="padding: 12px 10px;">kg</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #f2ebe4;">
+                <td style="padding: 12px 10px; font-weight: 600;">Whole Milk</td>
+                <td style="padding: 12px 10px; color: #666;">Dairy</td>
+                <td style="padding: 12px 10px;">8</td>
+                <td style="padding: 12px 10px;">L</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="background: #fff; border-radius: 12px; padding: 20px; border: 1px solid #e8ded5;">
+          <h3 style="font-family: Georgia, serif; margin-bottom: 16px;">⚠️ Low Stock Alerts</h3>
+          <ul id="low-stock-list" style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+            <li style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #f2ebe4;">
+              <div>
+                <strong>Whole Milk</strong>
+                <div style="font-size: 0.75rem; color: #8c7e73;">Reorder Level: 20 L</div>
+              </div>
+              <span style="background: #fdf3d8; color: #966e13; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">8 L</span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </main>
   </div>
 
