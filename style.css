@@ -1,4 +1,4 @@
-:root {
+  :root {
   --sidebar-bg: #1e1512;
   --sidebar-card: #2a1f1a;
   --sidebar-text: #d4c3b3;
@@ -52,6 +52,7 @@ body {
 }
 
 /* Animated GIF Layer */
+/* Animated GIF Layer - Fitted Frame */
 .login-view::before {
   content: "";
   position: absolute;
@@ -59,8 +60,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #120c0a url('login-bg.gif') center/cover no-repeat;
-  animation: moveBackground 20s infinite alternate ease-in-out;
+  background: #120c0a url('login-bg.gif') center/contain no-repeat;
   z-index: 0;
 }
 
