@@ -9,39 +9,40 @@
 <body>
 
   <!-- LOGIN VIEW -->
-  <div id="view-login" class="page-view login-view active">
-    <video autoplay loop muted playsinline id="login-video-bg">
-      <source src="login-bg.mp4" type="video/mp4">
-    </video>
-    <div class="login-card">
-      <div class="brand-header">
-        <span style="font-size: 2.2rem;">☕</span>
-        <h1>COFFEE MAYBE</h1>
-        <p>INVENTORY MANAGER PORTAL</p>
-      </div>
+ <!-- LOGIN VIEW -->
+<div id="view-login" class="page-view login-view active">
+  <video autoplay loop muted playsinline id="login-video-bg">
+    <source src="login-bg.mp4" type="video/mp4">
+  </video>
 
-      <!-- Replace line 18 in index.html -->
-      <form id="login-step-1">
-        <div class="form-group">
-          <label for="login-username">Username</label>
-          <input type="text" id="login-username" placeholder="Enter your username" required>
-        </div>
-        <div class="form-group">
-          <label for="login-password">Password</label>
-          <input type="password" id="login-password" placeholder="Enter your password" required>
-        </div>
-        <button type="submit" id="login-btn" class="btn-sign-in">LOGIN</button>
-      </form>
-      
-      <form id="login-step-2" class="hidden">
-        <div class="form-group">
-          <label for="login-otp">Verification Code</label>
-          <input type="text" id="login-otp" placeholder="Enter 6-digit OTP">
-        </div>
-        <button type="submit" class="btn-sign-in">VERIFY OTP</button>
-      </form>
+  <div class="login-card">
+    <div class="brand-header">
+      <span style="font-size: 2.2rem;">☕</span>
+      <h1>COFFEE MAYBE</h1>
+      <p>INVENTORY MANAGER PORTAL</p>
     </div>
+
+    <form id="login-step-1">
+      <div class="form-group">
+        <label for="login-username">Username</label>
+        <input type="text" id="login-username" placeholder="Enter your username" required>
+      </div>
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" placeholder="Enter your password" required>
+      </div>
+      <button type="submit" id="login-btn" class="btn-sign-in">LOGIN</button>
+    </form>
+
+    <form id="login-step-2" class="hidden">
+      <div class="form-group">
+        <label for="login-otp">Verification Code</label>
+        <input type="text" id="login-otp" placeholder="Enter 6-digit OTP">
+      </div>
+      <button type="submit" class="btn-sign-in">VERIFY OTP</button>
+    </form>
   </div>
+</div>
 
   <!-- DASHBOARD VIEW -->
   <div id="view-dashboard" class="page-view app-layout">
