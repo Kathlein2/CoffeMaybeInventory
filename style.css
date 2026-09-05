@@ -43,7 +43,7 @@ body {
 /* Login Page Styling */
 .login-view {
   min-height: 100vh;
-  background: #120c0a url('Coffee Steam Animation.jfif') center/cover no-repeat;
+  background: #120c0a url('login-bg.gif') center/cover no-repeat;
   display: flex;
   align-items: center;
   justify-content: flex-end;
