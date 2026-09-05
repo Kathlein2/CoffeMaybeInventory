@@ -1,240 +1,294 @@
 :root {
-  --bg-color: #f7f5f0;
-  --card-bg: #ffffff;
-  --text-color: #222222;
-  --border-color: #333333;
-  --radius: 12px;
+  --sidebar-bg: #1e1512;
+  --sidebar-card: #2a1f1a;
+  --sidebar-text: #d4c3b3;
+  --accent-brown: #8b5a36;
+  --accent-gold: #c6a27e;
+  --bg-cream: #f6f1eb;
+  --card-cream: #ffffff;
+  --text-dark: #2c221e;
+  --border-light: #e8ded5;
+  --status-green-bg: #e2f4e9;
+  --status-green-text: #227c44;
+  --status-gold-bg: #fdf3d8;
+  --status-gold-text: #966e13;
+  --radius-lg: 16px;
+  --radius-sm: 8px;
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 body {
-  background-color: #e5e5e5;
+  background-color: var(--sidebar-bg);
+  color: var(--text-dark);
+  min-height: 100vh;
+}
+
+/* Page Layout Structure */
+.app-layout {
   display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
 }
 
-/* Mobile Frame Wrapper */
-/* Full-Width Layout (Phone border removed) */
-.page-view {
-  display: none;
-  width: 100%;
-  max-width: 600px; /* Optional: keeps cards nicely centered on wide screens */
-  min-height: 100vh;
-  background-color: var(--bg-color);
-  border: none; /* Removed the outer phone border */
-  border-radius: 0; /* Removed the rounded corner box */
-  box-shadow: none; /* Removed heavy drop shadow */
-  overflow-y: auto;
-  position: relative;
-  margin: 0 auto;
-}
-
-body {
-  background-color: var(--bg-color); /* Matches background seamlessly */
-  display: block; /* Removes full-screen centering flexbox */
-  min-height: 100vh;
-}
-.page-view.active {
+/* Sidebar Styling */
+.sidebar {
+  width: 260px;
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  padding: 24px 16px;
   display: flex;
   flex-direction: column;
-}
-
-.content {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  flex: 1;
-}
-
-/* Header Bar */
-.top-bar {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  background-color: var(--bg-color);
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.top-bar h2 {
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-.icon-btn {
-  background: none;
-  border: none;
-  font-size: 1.4rem;
-  cursor: pointer;
-}
-
-/* Forms & Inputs */
-.login-container {
-  padding: 40px 24px;
+.brand-header {
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.login-container, .btn {
-  pointer-events: auto !important;
-  position: relative;
-  z-index: 10;
+  margin-bottom: 24px;
 }
 
-.logo-box h1 {
-  font-size: 1.8rem;
-  margin-top: 10px;
+.brand-header h1 {
   font-family: 'Georgia', serif;
+  font-size: 1.4rem;
+  color: #ffffff;
+  margin-top: 8px;
 }
 
-.coffee-cup-icon {
-  font-size: 4rem;
+.brand-header p {
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  color: var(--accent-gold);
 }
 
-.input-group {
+.user-profile-card {
   display: flex;
   align-items: center;
-  background: var(--card-bg);
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius);
+  gap: 12px;
+  background: var(--sidebar-card);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 24px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--accent-gold);
+}
+
+.user-info h4 {
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.user-info span {
+  font-size: 0.75rem;
+  color: var(--accent-gold);
+}
+
+.nav-menu {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-item button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 12px 16px;
-  margin-bottom: 12px;
-}
-
-.input-group input {
-  border: none;
-  outline: none;
-  width: 100%;
-  margin-left: 10px;
-  font-size: 1rem;
-}
-
-/* Buttons */
-.btn {
-  width: 100%;
-  padding: 14px;
-  border-radius: var(--radius);
-  border: 1.5px solid var(--border-color);
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background-color: #ebe7df;
-  color: var(--text-color);
-}
-
-.btn-outline {
   background: transparent;
+  border: none;
+  color: var(--sidebar-text);
+  font-size: 0.95rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-/* Cards & Grid */
-.welcome-card {
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 16px;
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 600;
-  background: var(--card-bg);
+.nav-item.active button, .nav-item button:hover {
+  background: var(--accent-brown);
+  color: #ffffff;
+}
+
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  background-color: var(--bg-cream);
+  padding: 32px;
+  overflow-y: auto;
+}
+
+/* Hero Banner */
+.hero-banner {
+  background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('assets/cafe-hero.jpg') center/cover;
+  border-radius: var(--radius-lg);
+  padding: 40px 32px;
+  color: #ffffff;
+  margin-bottom: 28px;
+  position: relative;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.hero-banner h2 {
+  font-family: 'Georgia', serif;
+  font-size: 2rem;
+  margin-bottom: 6px;
+}
+
+/* Stats Cards Row */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
 }
 
 .stat-card {
+  background: var(--card-cream);
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
   display: flex;
   align-items: center;
   gap: 16px;
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 12px 20px;
-  background: var(--card-bg);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
 }
 
-.stat-icon {
-  font-size: 1.8rem;
-}
-
-.stat-info span {
-  display: block;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-.stat-info strong {
+.stat-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #2b1d16;
+  color: var(--accent-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1.2rem;
 }
 
-.nav-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
 }
 
-.grid-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 20px;
-  background: var(--card-bg);
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.grid-icon {
-  font-size: 2rem;
-}
-
-/* Item Row Styling */
-.item-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--card-bg);
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 12px 16px;
-  margin-bottom: 8px;
-  font-size: 0.9rem;
-}
-
-.table-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 16px 8px 16px;
-  font-weight: 600;
+.stat-label {
   font-size: 0.8rem;
-  color: #444;
+  color: #7a6e65;
 }
 
-.stock-calc-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
+/* Dashboard Sections Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+.content-card {
+  background: var(--card-cream);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.card-title {
+  font-family: 'Georgia', serif;
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  color: var(--text-dark);
+}
+
+/* Custom Table Design */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th {
+  text-align: left;
+  padding: 12px;
+  font-size: 0.8rem;
+  color: #8c7e73;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.data-table td {
+  padding: 14px 12px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* Status Pill Badges */
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
-.calc-badge {
-  background: #ebe7df;
-  border: 1.5px solid var(--border-color);
-  padding: 8px 20px;
-  border-radius: var(--radius);
+.badge-in-stock {
+  background: var(--status-green-bg);
+  color: var(--status-green-text);
 }
 
-.hidden {
-  display: none !important;
+.badge-low-stock {
+  background: var(--status-gold-bg);
+  color: var(--status-gold-text);
+}
+
+/* Quote Widget */
+.quote-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  border: 1px solid var(--border-light);
+  font-style: italic;
+  color: #55483f;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* LOGIN VIEW SPECIFIC DARK STYLING */
+.login-view {
+  min-height: 100vh;
+  background: linear-gradient(rgba(15,10,8,0.75), rgba(15,10,8,0.75)), url('assets/cafe-login-bg.jpg') center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 40px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(26, 18, 15, 0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(198, 162, 126, 0.3);
+  border-radius: 20px;
+  padding: 40px;
+  color: #ffffff;
+}
+
+.login-card input {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(198, 162, 126, 0.3);
+  color: #ffffff;
+}
+
+.btn-sign-in {
+  background: var(--accent-brown);
+  color: #ffffff;
+  border: 1px solid var(--accent-gold);
 }
