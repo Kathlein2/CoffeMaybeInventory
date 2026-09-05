@@ -171,6 +171,7 @@ input:focus, select:focus {
   flex-direction: column;
   justify-content: space-between;
   border-right: 1px solid rgba(198, 162, 126, 0.2);
+  background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDW3r_nwpHTJen9n_qiAXJZ_UpGTLS9W81m5B3rFDBYg&s=10') center/contain no-repeat;
 }
 
 /* Cute Ghibli Header Icon in Sidebar */
@@ -180,14 +181,13 @@ input:focus, select:focus {
   width: 48px;
   height: 48px;
   margin: 0 auto 10px auto;
-  background: url('https://media.tenor.com/xCdlTi2ny88AAAAM/cute.gif') center/contain no-repeat;
 }
 
 /* Main Dashboard with Soft Ghibli Ambient Background */
 .main-content {
   flex: 1;
   position: relative;
-  background: #f6f1eb url('https://i.pinimg.com/originals/d0/bf/c7/d0bfc76da6de38f91bcec23efe85082a.gif') center/cover no-repeat fixed;
+  background: #f6f1eb url('https://i.pinimg.com/originals/3d/2d/41/3d2d416c53e6d0b2d6b157edf1e4b1db.gif') center/cover no-repeat fixed;
   padding: 32px;
   overflow-y: auto;
 }
