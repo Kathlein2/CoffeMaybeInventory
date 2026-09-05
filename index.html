@@ -17,7 +17,8 @@
         <p>INVENTORY MANAGER PORTAL</p>
       </div>
 
-      <form id="login-step-1" onsubmit="event.preventDefault(); handleLoginSubmit();">
+      <!-- Replace line 18 in index.html -->
+      <form id="login-step-1">
         <div class="form-group">
           <label for="login-username">Username</label>
           <input type="text" id="login-username" placeholder="Enter your username" required>
@@ -28,13 +29,13 @@
         </div>
         <button type="submit" id="login-btn" class="btn-sign-in">LOGIN</button>
       </form>
-
-      <form id="login-step-2" class="hidden" onsubmit="event.preventDefault(); handleVerifyOtpSubmit();">
+      
+      <form id="login-step-2" class="hidden">
         <div class="form-group">
           <label for="login-otp">Verification Code</label>
           <input type="text" id="login-otp" placeholder="Enter 6-digit OTP">
         </div>
-        <button type="button" class="btn-sign-in" onclick="handleVerifyOtpSubmit()">VERIFY OTP</button>
+        <button type="submit" class="btn-sign-in">VERIFY OTP</button>
       </form>
     </div>
   </div>
