@@ -59,7 +59,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #120c0a url('https://i.pinimg.com/736x/0e/f9/4f/0ef94f5ce3ff1022bcf4dd3c5e6c8752.jpg') center/cover no-repeat;
+  background: #120c0a url('https://i.pinimg.com/originals/3e/d8/3f/3ed83ff5893bfb480dc66c9c33fbf183.gif') center/cover no-repeat;
   background-size: cover; /* Forces fill without excessive stretch */
   background-position: center 30%; /* Pulls the view slightly up to show more scene */
   z-index: 0;
