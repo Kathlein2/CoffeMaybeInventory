@@ -12,37 +12,35 @@
   <div id="view-login" class="page-view login-view active">
     <div class="login-card">
       <div class="brand-header">
-        <span style="font-size: 2rem;">☕</span>
+        <span style="font-size: 2.2rem;">☕</span>
         <h1>COFFEE MAYBE</h1>
         <p>INVENTORY MANAGER PORTAL</p>
       </div>
 
-      <div id="login-step-1">
+      <form id="login-step-1" onsubmit="event.preventDefault(); handleLoginSubmit();">
         <div class="form-group">
-          <label style="color: var(--accent-gold);">Username</label>
-          <input type="text" id="login-username" placeholder="Enter your username">
+          <label for="login-username">Username</label>
+          <input type="text" id="login-username" placeholder="Enter your username" required>
         </div>
         <div class="form-group">
-          <label style="color: var(--accent-gold);">Password</label>
-          <input type="password" id="login-password" placeholder="Enter your password">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="Enter your password" required>
         </div>
-        <button class="btn btn-sign-in" onclick="handleLoginSubmit()">SIGN IN</button>
-      </div>
+        <button type="button" class="btn-sign-in" onclick="handleLoginSubmit()">SIGN IN</button>
+      </form>
 
-      <div id="login-step-2" class="hidden" style="margin-top: 20px;">
+      <form id="login-step-2" class="hidden" onsubmit="event.preventDefault(); handleVerifyOtpSubmit();">
         <div class="form-group">
-          <label style="color: var(--accent-gold);">Verification Code</label>
+          <label for="login-otp">Verification Code</label>
           <input type="text" id="login-otp" placeholder="Enter 6-digit OTP">
         </div>
-        <button class="btn btn-sign-in" onclick="handleVerifyOtpSubmit()">VERIFY OTP</button>
-      </div>
+        <button type="button" class="btn-sign-in" onclick="handleVerifyOtpSubmit()">VERIFY OTP</button>
+      </form>
     </div>
   </div>
 
-  <!-- DASHBOARD APP LAYOUT -->
+  <!-- DASHBOARD VIEW -->
   <div id="view-dashboard" class="page-view app-layout">
-    
-    <!-- Dark Sidebar -->
     <aside class="sidebar">
       <div>
         <div class="brand-header">
@@ -50,92 +48,17 @@
           <h1>Coffee Maybe</h1>
           <p>INVENTORY SYSTEM</p>
         </div>
-
-        <div class="user-profile-card">
-          <div class="avatar" style="background: var(--accent-brown);"></div>
-          <div class="user-info">
-            <h4>Manager</h4>
-            <span>Inventory Manager</span>
-          </div>
-        </div>
-
-        <ul class="nav-menu">
-          <li class="nav-item active"><button onclick="showView('view-dashboard')">📊 Dashboard</button></li>
-          <li class="nav-item"><button onclick="showView('view-inventory')">📦 Inventory</button></li>
-          <li class="nav-item"><button onclick="openTransaction('Stock In')">📥 Stock In</button></li>
-          <li class="nav-item"><button onclick="openTransaction('Stock Out')">📤 Stock Out</button></li>
-          <li class="nav-item"><button onclick="showView('view-history')">🕒 History</button></li>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 20px;">
+          <li><button class="btn-sign-in" onclick="showView('view-dashboard')">📊 Dashboard</button></li>
+          <li><button class="btn-sign-in" onclick="showView('view-inventory')">📦 Inventory</button></li>
         </ul>
       </div>
-
-      <div class="nav-item">
-        <button onclick="logout()">🚪 Logout</button>
-      </div>
+      <button class="btn-sign-in" onclick="logout()">🚪 Logout</button>
     </aside>
 
-    <!-- Main Content Panel -->
     <main class="main-content">
-      <div class="hero-banner">
-        <h2>Good evening, Manager! ☕</h2>
-        <p>Here's what's happening in your coffee inventory today.</p>
-      </div>
-
-      <!-- Stats Grid -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon-wrap">📦</div>
-          <div>
-            <div class="stat-value" id="stat-total-items">42</div>
-            <div class="stat-label">Total Items</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon-wrap">⚠️</div>
-          <div>
-            <div class="stat-value" id="stat-low-stock">6</div>
-            <div class="stat-label">Low Stock Items</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon-wrap">📋</div>
-          <div>
-            <div class="stat-value" id="stat-transactions">18</div>
-            <div class="stat-label">Today's Transactions</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Dashboard Sections -->
-      <div class="dashboard-grid">
-        <div class="content-card">
-          <h3 class="card-title">☕ Inventory Overview</h3>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Item Name</th>
-                <th>Category</th>
-                <th>Quantity</th>
-                <th>Unit</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="dashboard-inventory-rows">
-              <!-- Dynamically Populated -->
-            </tbody>
-          </table>
-        </div>
-
-        <div class="content-card">
-          <h3 class="card-title">⚠️ Low Stock Alerts</h3>
-          <div id="low-stock-list">
-            <!-- Dynamically Populated -->
-          </div>
-        </div>
-      </div>
-
-      <div class="quote-card">
-        "Efficiency is not about doing more. It's about doing what matters." – Nanami Kento
-      </div>
+      <h2>Welcome, Manager! ☕</h2>
+      <p>Your dashboard is ready.</p>
     </main>
   </div>
 
