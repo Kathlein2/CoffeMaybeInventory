@@ -40,7 +40,7 @@ body {
   display: none !important;
 }
 
-/* Login Page Styling with HD MP4 Video Background */
+/* Login Page Styling with Direct High-Res Pinterest GIF */
 .login-view {
   min-height: 100vh;
   position: relative;
@@ -51,26 +51,27 @@ body {
   padding: 40px;
 }
 
-/* Fullscreen Background Video */
-#login-video-bg {
+/* Background GIF Layer */
+.login-view::before {
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  background: #120c0a url('https://i.pinimg.com/originals/28/98/4f/28984f7d31ed9946afc5a8074dc27237.gif') center/cover no-repeat;
   z-index: 0;
 }
 
-/* Glassmorphism Login Card */
+/* Frosted Glass Login Card */
 .login-card {
   position: relative;
   z-index: 1;
   width: 100%;
   max-width: 420px;
   background: rgba(22, 15, 12, 0.88);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(198, 162, 126, 0.35);
   border-radius: 20px;
   padding: 36px;
@@ -80,7 +81,7 @@ body {
 
 .login-card input {
   color: #ffffff;
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .brand-header {
