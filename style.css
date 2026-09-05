@@ -103,7 +103,7 @@ body {
 .brand-header p {
   font-size: 0.75rem;
   letter-spacing: 1.5px;
-  color: var(--accent-gold);
+  color: var(--font-cream);
   font-weight: 600;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
