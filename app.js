@@ -16,10 +16,12 @@ function showView(viewId) {
   document.querySelectorAll('.page-view').forEach(view => {
     view.classList.remove('active');
   });
-  const targetView = document.getElementById(viewId);
-  if (targetView) {
-    targetView.classList.add('active');
+  
+  const target = document.getElementById(viewId);
+  if (target) {
+    target.classList.add('active');
   }
+}
   
   if (viewId === 'view-inventory' || viewId === 'view-dashboard') {
     loadInventoryData();
