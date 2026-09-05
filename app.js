@@ -151,9 +151,14 @@ function renderInventoryTables() {
 }
 
 // 1. Step 1 Login Submission
+let isSubmitting = false;
+
 async function handleLoginSubmit() {
+  if (isSubmitting) return; // Prevent concurrent requests
+
   const usernameInput = document.getElementById('login-username');
   const passwordInput = document.getElementById('login-password');
+  const loginBtn = document.getElementById('login-btn');
 
   if (!usernameInput || !passwordInput) return;
 
@@ -166,6 +171,12 @@ async function handleLoginSubmit() {
   }
 
   try {
+    isSubmitting = true;
+    if (loginBtn) {
+      loginBtn.disabled = true;
+      loginBtn.innerText = 'SENDING OTP...';
+    }
+
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -182,6 +193,12 @@ async function handleLoginSubmit() {
     }
   } catch (err) {
     alert('Backend connection error: ' + err.message);
+  } finally {
+    isSubmitting = false;
+    if (loginBtn) {
+      loginBtn.disabled = false;
+      loginBtn.innerText = 'LOGIN';
+    }
   }
 }
 
