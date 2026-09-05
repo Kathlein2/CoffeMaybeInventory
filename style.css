@@ -89,23 +89,28 @@ body {
 .brand-header {
   text-align: center;
   margin-bottom: 24px;
-  background: #120c0a url('https://i.pinimg.com/originals/d0/bf/c7/d0bfc76da6de38f91bcec23efe85082a.gif') center/cover no-repeat;
+  background: rgba(18, 12, 10, 0.75) url('https://i.pinimg.com/originals/d0/bf/c7/d0bfc76da6de38f91bcec23efe85082a.gif') center/cover no-repeat;
+  background-blend-mode: darken; /* Darks the GIF slightly behind the text */
+  padding: 16px 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(226, 193, 157, 0.3);
 }
 
 .brand-header h1 {
   font-size: 1.6rem;
-  color: var(--font-cream);
+  color: #ffffff;
+  font-weight: 800;
   margin-top: 6px;
   letter-spacing: 1.5px;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
 }
 
 .brand-header p {
   font-size: 0.75rem;
   letter-spacing: 1.5px;
-  color: var(--font-cream);
-  font-weight: 600;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  color: #fce4c8; /* Warm peach-gold for contrast */
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
 .form-group {
