@@ -275,15 +275,33 @@ input:focus, select:focus {
 @media (max-width: 768px) {
   .app-layout {
     flex-direction: column;
+    min-height: 100vh;
   }
 
+  /* Keep sidebar full-width and relative on top */
   .sidebar {
-    width: 100%;
+    width: 100% !important;
     min-height: auto;
+    padding: 16px;
+    border-right: none;
+    border-bottom: 1px solid rgba(198, 162, 126, 0.2);
   }
 
+  /* Prevent main content overlay from covering full screen */
+  .main-content {
+    width: 100%;
+    padding: 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Pin overlay strictly behind content section on mobile */
   .main-content::before {
+    position: absolute;
+    top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
   }
 
   .login-view {
@@ -293,10 +311,6 @@ input:focus, select:focus {
   .login-card {
     max-width: 100%;
     padding: 20px;
-  }
-
-  .main-content {
-    padding: 16px;
   }
 
   /* Grid layout fallbacks for mobile */
@@ -309,5 +323,10 @@ input:focus, select:focus {
   #crud-modal > div {
     width: 90% !important;
     padding: 16px !important;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
