@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   renderInventoryTables();
+  populateDropdowns();
 });
 
 // Navigation Controller
@@ -49,8 +50,24 @@ function showView(viewId) {
     targetView.classList.add('active');
   }
 
-  if (viewId === 'view-dashboard' || viewId === 'view-inventory') {
+  if (viewId === 'view-dashboard' || viewId === 'view-inventory' || viewId === 'view-transactions') {
+    populateDropdowns();
     loadInventoryData();
+  }
+}
+
+// Populate Item Dropdowns for Select Controls
+function populateDropdowns() {
+  const transSelect = document.getElementById('trans-item-select');
+  if (transSelect) {
+    transSelect.innerHTML = currentInventory.length
+      ? currentInventory.map(item => `<option value="${item.name}">${item.name} (${item.quantity} ${item.unit || 'pcs'})</option>`).join('')
+      : '<option value="">No items available</option>';
+  }
+
+  const editSelect = document.getElementById('item-name-select');
+  if (editSelect) {
+    editSelect.innerHTML = currentInventory.map(item => `<option value="${item.id}">${item.name}</option>`).join('');
   }
 }
 
@@ -60,7 +77,6 @@ function renderInventoryTables() {
   const dashRows = document.getElementById('dashboard-inventory-rows');
   const fullRows = document.getElementById('full-inventory-rows');
 
-  // Render Full Table with Actions (Edit/Delete)
   if (fullRows) {
     fullRows.innerHTML = currentInventory.map(item => `
       <tr style="border-bottom: 1px solid #f2ebe4;">
@@ -76,7 +92,6 @@ function renderInventoryTables() {
     `).join('');
   }
 
-  // Render Dashboard Preview (Without Actions)
   if (dashRows) {
     dashRows.innerHTML = currentInventory.slice(0, 5).map(item => `
       <tr style="border-bottom: 1px solid #f2ebe4;">
@@ -90,70 +105,87 @@ function renderInventoryTables() {
 
   const totalItemsElem = document.getElementById('stat-total-items');
   if (totalItemsElem) {
-    totalItemsElem.innerText = currentInventory.length;
+    totalItemsElem.innerText = `${currentInventory.length} Total Items`;
   }
 }
 
-// Open Modal for Creating Item
 function openAddModal() {
   editingItemId = null;
   const modalTitle = document.getElementById('modal-title');
   const itemForm = document.getElementById('item-form');
   const modal = document.getElementById('crud-modal');
+  const nameInput = document.getElementById('item-name-input');
+  const nameSelect = document.getElementById('item-name-select');
 
   if (modalTitle) modalTitle.innerText = '➕ Add New Item';
   if (itemForm) itemForm.reset();
-  if (modal) modal.classList.remove('hidden');
+
+  if (nameInput) nameInput.style.display = 'block';
+  if (nameSelect) nameSelect.style.display = 'none';
+
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+  }
 }
 
-// Open Modal for Updating Item
 function openEditModal(id) {
   const item = currentInventory.find(i => i.id === id);
   if (!item) return;
 
   editingItemId = id;
-  
   const modalTitle = document.getElementById('modal-title');
+  const modal = document.getElementById('crud-modal');
+  const nameInput = document.getElementById('item-name-input');
+  const nameSelect = document.getElementById('item-name-select');
+
   if (modalTitle) modalTitle.innerText = '✏️ Edit Item';
 
-  document.getElementById('item-name').value = item.name;
+  if (nameInput) {
+    nameInput.value = item.name;
+    nameInput.style.display = 'block';
+  }
+  if (nameSelect) nameSelect.style.display = 'none';
+
   document.getElementById('item-category').value = item.category;
   document.getElementById('item-qty').value = item.quantity;
   document.getElementById('item-unit').value = item.unit || 'pcs';
 
-  const modal = document.getElementById('crud-modal');
-  if (modal) modal.classList.remove('hidden');
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+  }
 }
 
 function closeModal() {
   const modal = document.getElementById('crud-modal');
-  if (modal) modal.classList.add('hidden');
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+  }
 }
 
-// Save (Create or Update) Item
 async function saveItem(e) {
   e.preventDefault();
 
-  const name = document.getElementById('item-name').value.trim();
+  const name = document.getElementById('item-name-input').value.trim();
   const category = document.getElementById('item-category').value.trim();
   const quantity = parseInt(document.getElementById('item-qty').value, 10);
   const unit = document.getElementById('item-unit').value.trim();
 
   if (editingItemId) {
-    // Update local state
     currentInventory = currentInventory.map(item =>
       item.id === editingItemId ? { ...item, name, category, quantity, unit } : item
     );
   } else {
-    // Create local state
     const newItem = { id: Date.now(), name, category, quantity, unit };
     currentInventory.push(newItem);
   }
 
   renderInventoryTables();
+  populateDropdowns();
   closeModal();
 
-  // Sync with Apps Script API
   try {
     await fetch(API_URL, {
       method: 'POST',
@@ -172,12 +204,12 @@ async function saveItem(e) {
   }
 }
 
-// Delete Item
 async function deleteItem(id) {
   if (!confirm('Are you sure you want to delete this item?')) return;
 
   currentInventory = currentInventory.filter(item => item.id !== id);
   renderInventoryTables();
+  populateDropdowns();
 
   try {
     await fetch(API_URL, {
@@ -196,23 +228,21 @@ async function handleTransactionSubmit(e) {
   e.preventDefault();
 
   const typeSelect = document.getElementById('trans-type');
-  const itemNameInput = document.getElementById('trans-item-name');
+  const itemSelect = document.getElementById('trans-item-select');
   const quantityInput = document.getElementById('trans-quantity');
 
   const transactionType = typeSelect ? typeSelect.value : 'IN';
-  const itemName = itemNameInput ? itemNameInput.value.trim() : '';
+  const itemName = itemSelect ? itemSelect.value : '';
   const quantity = quantityInput ? parseFloat(quantityInput.value) : 0;
 
   if (!itemName || isNaN(quantity) || quantity <= 0) {
-    alert('Please enter a valid item name and a positive quantity.');
+    alert('Please select an item and enter a valid positive quantity.');
     return;
   }
 
-  let found = false;
   currentInventory.forEach(item => {
     if (item.name.toLowerCase() === itemName.toLowerCase()) {
-      found = true;
-      if (transactionType === 'IN' || transactionType === 'Stock In') {
+      if (transactionType === 'IN') {
         item.quantity += quantity;
       } else {
         item.quantity = Math.max(0, item.quantity - quantity);
@@ -220,11 +250,8 @@ async function handleTransactionSubmit(e) {
     }
   });
 
-  if (!found && (transactionType === 'IN' || transactionType === 'Stock In')) {
-    currentInventory.push({ id: Date.now(), name: itemName, category: 'General', quantity, unit: 'pcs' });
-  }
-
   renderInventoryTables();
+  populateDropdowns();
 
   try {
     await fetch(API_URL, {
@@ -338,6 +365,7 @@ async function loadInventoryData() {
     if (result.ok && result.items) {
       currentInventory = result.items;
       renderInventoryTables();
+      populateDropdowns();
     }
   } catch (err) {
     console.error('Error loading inventory:', err);
