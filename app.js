@@ -1,10 +1,13 @@
 const API_URL = '/api/apps-script';
+
 let currentInventory = [
-  { name: 'Arabica Beans', category: 'Coffee Beans', quantity: 25, unit: 'kg' },
-  { name: 'Whole Milk', category: 'Dairy', quantity: 8, unit: 'L' }
+  { id: 1, name: 'Arabica Beans', category: 'Coffee Beans', quantity: 25, unit: 'kg' },
+  { id: 2, name: 'Whole Milk', category: 'Dairy', quantity: 8, unit: 'L' }
 ];
 
-// Handle DOM initialization
+let editingItemId = null;
+
+// Initialize Event Listeners on Load
 document.addEventListener('DOMContentLoaded', () => {
   const step1Form = document.getElementById('login-step-1');
   if (step1Form) {
@@ -22,16 +25,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Bind Stock In / Stock Out form handler
   const transForm = document.getElementById('transaction-form');
   if (transForm) {
     transForm.addEventListener('submit', handleTransactionSubmit);
   }
-  
+
+  const itemForm = document.getElementById('item-form');
+  if (itemForm) {
+    itemForm.addEventListener('submit', saveItem);
+  }
+
   renderInventoryTables();
 });
 
-// View Navigation Handler
+// Navigation Controller
 function showView(viewId) {
   document.querySelectorAll('.page-view').forEach(view => {
     view.classList.remove('active');
@@ -47,22 +54,144 @@ function showView(viewId) {
   }
 }
 
-// Transaction Modal Helper (Sets 'Stock In' or 'Stock Out')
-function openTransaction(mode) {
-  showView('view-transaction');
+// ================= CRUD & TABLE RENDERING =================
 
-  const titleElem = document.getElementById('trans-title');
-  if (titleElem) {
-    titleElem.innerText = mode;
+function renderInventoryTables() {
+  const dashRows = document.getElementById('dashboard-inventory-rows');
+  const fullRows = document.getElementById('full-inventory-rows');
+
+  // Render Full Table with Actions (Edit/Delete)
+  if (fullRows) {
+    fullRows.innerHTML = currentInventory.map(item => `
+      <tr style="border-bottom: 1px solid #f2ebe4;">
+        <td style="padding: 12px; font-weight: 600;">${item.name}</td>
+        <td style="padding: 12px; color: #666;">${item.category}</td>
+        <td style="padding: 12px;">${item.quantity}</td>
+        <td style="padding: 12px;">${item.unit || 'pcs'}</td>
+        <td style="padding: 12px;">
+          <button onclick="openEditModal(${item.id})" style="background: #8b5a36; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; margin-right: 4px;">✏️ Edit</button>
+          <button onclick="deleteItem(${item.id})" style="background: #a93226; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">🗑️ Delete</button>
+        </td>
+      </tr>
+    `).join('');
   }
 
-  const typeSelect = document.getElementById('trans-type');
-  if (typeSelect) {
-    typeSelect.value = mode;
+  // Render Dashboard Preview (Without Actions)
+  if (dashRows) {
+    dashRows.innerHTML = currentInventory.slice(0, 5).map(item => `
+      <tr style="border-bottom: 1px solid #f2ebe4;">
+        <td style="padding: 12px 10px; font-weight: 600;">${item.name}</td>
+        <td style="padding: 12px 10px; color: #666;">${item.category}</td>
+        <td style="padding: 12px 10px;">${item.quantity}</td>
+        <td style="padding: 12px 10px;">${item.unit || 'pcs'}</td>
+      </tr>
+    `).join('');
+  }
+
+  const totalItemsElem = document.getElementById('stat-total-items');
+  if (totalItemsElem) {
+    totalItemsElem.innerText = currentInventory.length;
   }
 }
 
-// Submit Stock In or Stock Out Transaction
+// Open Modal for Creating Item
+function openAddModal() {
+  editingItemId = null;
+  const modalTitle = document.getElementById('modal-title');
+  const itemForm = document.getElementById('item-form');
+  const modal = document.getElementById('crud-modal');
+
+  if (modalTitle) modalTitle.innerText = '➕ Add New Item';
+  if (itemForm) itemForm.reset();
+  if (modal) modal.classList.remove('hidden');
+}
+
+// Open Modal for Updating Item
+function openEditModal(id) {
+  const item = currentInventory.find(i => i.id === id);
+  if (!item) return;
+
+  editingItemId = id;
+  
+  const modalTitle = document.getElementById('modal-title');
+  if (modalTitle) modalTitle.innerText = '✏️ Edit Item';
+
+  document.getElementById('item-name').value = item.name;
+  document.getElementById('item-category').value = item.category;
+  document.getElementById('item-qty').value = item.quantity;
+  document.getElementById('item-unit').value = item.unit || 'pcs';
+
+  const modal = document.getElementById('crud-modal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeModal() {
+  const modal = document.getElementById('crud-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+// Save (Create or Update) Item
+async function saveItem(e) {
+  e.preventDefault();
+
+  const name = document.getElementById('item-name').value.trim();
+  const category = document.getElementById('item-category').value.trim();
+  const quantity = parseInt(document.getElementById('item-qty').value, 10);
+  const unit = document.getElementById('item-unit').value.trim();
+
+  if (editingItemId) {
+    // Update local state
+    currentInventory = currentInventory.map(item =>
+      item.id === editingItemId ? { ...item, name, category, quantity, unit } : item
+    );
+  } else {
+    // Create local state
+    const newItem = { id: Date.now(), name, category, quantity, unit };
+    currentInventory.push(newItem);
+  }
+
+  renderInventoryTables();
+  closeModal();
+
+  // Sync with Apps Script API
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: editingItemId ? 'updateItem' : 'addItem',
+        id: editingItemId,
+        name,
+        category,
+        quantity,
+        unit
+      })
+    });
+  } catch (err) {
+    console.warn('API Sync issue, local state updated.', err);
+  }
+}
+
+// Delete Item
+async function deleteItem(id) {
+  if (!confirm('Are you sure you want to delete this item?')) return;
+
+  currentInventory = currentInventory.filter(item => item.id !== id);
+  renderInventoryTables();
+
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'deleteItem', id })
+    });
+  } catch (err) {
+    console.warn('API Delete issue, local state updated.', err);
+  }
+}
+
+// ================= STOCK MOVEMENTS =================
+
 async function handleTransactionSubmit(e) {
   e.preventDefault();
 
@@ -70,7 +199,7 @@ async function handleTransactionSubmit(e) {
   const itemNameInput = document.getElementById('trans-item-name');
   const quantityInput = document.getElementById('trans-quantity');
 
-  const transactionType = typeSelect ? typeSelect.value : 'Stock In';
+  const transactionType = typeSelect ? typeSelect.value : 'IN';
   const itemName = itemNameInput ? itemNameInput.value.trim() : '';
   const quantity = quantityInput ? parseFloat(quantityInput.value) : 0;
 
@@ -79,12 +208,11 @@ async function handleTransactionSubmit(e) {
     return;
   }
 
-  // Update local state instantly for active UI display
   let found = false;
   currentInventory.forEach(item => {
     if (item.name.toLowerCase() === itemName.toLowerCase()) {
       found = true;
-      if (transactionType === 'Stock In') {
+      if (transactionType === 'IN' || transactionType === 'Stock In') {
         item.quantity += quantity;
       } else {
         item.quantity = Math.max(0, item.quantity - quantity);
@@ -92,69 +220,37 @@ async function handleTransactionSubmit(e) {
     }
   });
 
-  if (!found && transactionType === 'Stock In') {
-    currentInventory.push({ name: itemName, category: 'General', quantity: quantity, unit: 'pcs' });
+  if (!found && (transactionType === 'IN' || transactionType === 'Stock In')) {
+    currentInventory.push({ id: Date.now(), name: itemName, category: 'General', quantity, unit: 'pcs' });
   }
 
   renderInventoryTables();
 
   try {
-    const response = await fetch(API_URL, {
+    await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         action: 'recordTransaction',
         type: transactionType,
-        itemName: itemName,
-        quantity: quantity
+        itemName,
+        quantity
       })
     });
-    const result = await response.json();
-
-    if (result.ok) {
-      alert(`${transactionType} of ${quantity} units logged successfully!`);
-    } else {
-      alert(`Local view updated (${transactionType} logged).`);
-    }
   } catch (err) {
-    alert(`${transactionType} of ${quantity} logged for "${itemName}".`);
+    console.warn('Backend sync issue, recorded locally.', err);
   }
 
   e.target.reset();
   showView('view-dashboard');
 }
 
-// Render dynamic tables and statistics
-function renderInventoryTables() {
-  const dashRows = document.getElementById('dashboard-inventory-rows');
-  const fullRows = document.getElementById('full-inventory-rows');
+// ================= AUTHENTICATION & API =================
 
-  let tableHtml = '';
-  currentInventory.forEach(item => {
-    tableHtml += `
-      <tr style="border-bottom: 1px solid #f2ebe4;">
-        <td style="padding: 12px 10px; font-weight: 600;">${item.name}</td>
-        <td style="padding: 12px 10px; color: #666;">${item.category}</td>
-        <td style="padding: 12px 10px;">${item.quantity}</td>
-        <td style="padding: 12px 10px;">${item.unit}</td>
-      </tr>
-    `;
-  });
-
-  if (dashRows) dashRows.innerHTML = tableHtml;
-  if (fullRows) fullRows.innerHTML = tableHtml;
-
-  const totalItemsElem = document.getElementById('stat-total-items');
-  if (totalItemsElem) {
-    totalItemsElem.innerText = currentInventory.length;
-  }
-}
-
-// 1. Step 1 Login Submission
 let isSubmitting = false;
 
 async function handleLoginSubmit() {
-  if (isSubmitting) return; // Prevent concurrent requests
+  if (isSubmitting) return;
 
   const usernameInput = document.getElementById('login-username');
   const passwordInput = document.getElementById('login-password');
@@ -202,7 +298,6 @@ async function handleLoginSubmit() {
   }
 }
 
-// 2. Step 2 OTP Verification
 async function handleVerifyOtpSubmit() {
   const otpInput = document.getElementById('login-otp');
   if (!otpInput) return;
@@ -231,7 +326,6 @@ async function handleVerifyOtpSubmit() {
   }
 }
 
-// 3. Load Data from Google Sheets
 async function loadInventoryData() {
   try {
     const response = await fetch(API_URL, {
@@ -250,7 +344,6 @@ async function loadInventoryData() {
   }
 }
 
-// 4. Logout Session Reset
 function logout() {
   location.reload();
 }
