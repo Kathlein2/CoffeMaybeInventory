@@ -41,18 +41,18 @@ body {
   display: none !important;
 }
 
-/* ================= LOGIN VIEW ================= */
+/* ================= LOGIN VIEW (CENTERED) ================= */
 .login-view {
   min-height: 100vh;
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  padding: 40px;
+  justify-content: center;
+  padding: 20px;
 }
 
-/* Login Background GIF */
+/* Login Main GIF Background */
 .login-view::before {
   content: "";
   position: absolute;
@@ -64,20 +64,20 @@ body {
   z-index: 0;
 }
 
-/* Glassmorphic Login Card */
+/* Glassmorphic Centered Card */
 .login-card {
   position: relative;
   z-index: 1;
   width: 100%;
   max-width: 420px;
-  background: rgba(22, 15, 12, 0.88);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(22, 15, 12, 0.90);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(226, 193, 157, 0.35);
   border-radius: 20px;
-  padding: 36px;
+  padding: 32px;
   color: var(--font-cream);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65);
 }
 
 .login-card input {
@@ -85,30 +85,30 @@ body {
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* Clean Brand Header */
+/* Brand Header Banner */
 .brand-header {
   text-align: center;
   margin-bottom: 24px;
-  background: rgba(18, 12, 10, 0.75) url('https://i.pinimg.com/originals/d0/bf/c7/d0bfc76da6de38f91bcec23efe85082a.gif') center/cover no-repeat;
-  background-blend-mode: darken; /* Darks the GIF slightly behind the text */
-  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.45) url('https://i.pinimg.com/originals/d0/bf/c7/d0bfc76da6de38f91bcec23efe85082a.gif') center/cover no-repeat;
+  background-blend-mode: darken;
+  padding: 18px 12px;
   border-radius: var(--radius-lg);
   border: 1px solid rgba(226, 193, 157, 0.3);
 }
 
 .brand-header h1 {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   color: #ffffff;
   font-weight: 800;
-  margin-top: 6px;
   letter-spacing: 1.5px;
+  margin-top: 4px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
 }
 
 .brand-header p {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   letter-spacing: 1.5px;
-  color: #fce4c8; /* Warm peach-gold for contrast */
+  color: #fce4c8;
   font-weight: 700;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
@@ -150,6 +150,7 @@ input:focus, select:focus {
   font-size: 0.95rem;
   cursor: pointer;
   margin-top: 8px;
+  text-align: center;
 }
 
 .btn-sign-in:hover {
@@ -171,28 +172,47 @@ input:focus, select:focus {
   flex-direction: column;
   justify-content: space-between;
   border-right: 1px solid rgba(198, 162, 126, 0.2);
-  background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDW3r_nwpHTJen9n_qiAXJZ_UpGTLS9W81m5B3rFDBYg&s=10') center/contain no-repeat;
 }
 
-/* Cute Ghibli Header Icon in Sidebar */
 .sidebar-header::before {
   content: "";
   display: block;
   width: 48px;
   height: 48px;
   margin: 0 auto 10px auto;
+  background: url('https://media.tenor.com/xCdlTi2ny88AAAAM/cute.gif') center/contain no-repeat;
 }
 
-/* Main Dashboard with Soft Ghibli Ambient Background */
+/* User Profile Card in Sidebar */
+.user-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--sidebar-card);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(198, 162, 126, 0.15);
+  margin-top: 10px;
+}
+
+/* Dynamic Main Views with Unique Ghibli Backgrounds */
 .main-content {
   flex: 1;
   position: relative;
-  background: #f6f1eb url('https://i.pinimg.com/originals/3d/2d/41/3d2d416c53e6d0b2d6b157edf1e4b1db.gif') center/cover no-repeat fixed;
+  background: #f6f1eb url('https://i.pinimg.com/originals/9c/59/c2/9c59c25abfdd3b930c2f514c02bfef72.gif') center/cover no-repeat fixed;
   padding: 32px;
   overflow-y: auto;
 }
 
-/* Frosted Tint Overlay for Dashboard Readability */
+.main-content.view-transactions {
+  background-image: url('https://i.pinimg.com/originals/75/a7/8b/75a78b9c3af5b1fd298a9e882300cb54.gif');
+}
+
+.main-content.view-suppliers {
+  background-image: url('https://i.pinimg.com/originals/3d/2d/41/3d2d416c53e6d0b2d6b157edf1e4b1db.gif');
+}
+
+/* Frosted Cream Overlay for Readability */
 .main-content::before {
   content: "";
   position: fixed;
@@ -211,7 +231,7 @@ input:focus, select:focus {
   z-index: 1;
 }
 
-/* Inputs & Form Elements in Dashboard */
+/* Input Fields inside Dashboard */
 .main-content input,
 .main-content select,
 .main-content option {
