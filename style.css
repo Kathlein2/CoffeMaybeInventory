@@ -1,10 +1,23 @@
+/* Utility */
+.hidden {
+  display: none !important;
+}
+
+.page-view {
+  display: none;
+}
+
+.page-view.active {
+  display: flex;
+}
+
 /* Container: Slightly darker transparent base for contrast */
 .login-card {
   position: relative;
   z-index: 1;
   width: 100%;
   max-width: 420px;
-  background: rgba(0, 0, 0, 0.45); /* Increased opacity slightly to separate from background */
+  background: rgba(0, 0, 0, 0.45);
   border: 1px solid rgba(226, 193, 157, 0.4);
   border-radius: 20px;
   padding: 32px;
@@ -12,7 +25,7 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65);
 }
 
-/* Header Banner: Clean dark fill instead of image transparency bleed */
+/* Header Banner */
 .brand-header {
   background: rgba(20, 15, 12, 0.85); 
   border-radius: 12px;
@@ -20,7 +33,11 @@
   margin-bottom: 20px;
 }
 
-/* Labels: Drop shadow ensures text is legible over any background image */
+/* Base Form Styles */
+.form-group {
+  margin-bottom: 16px;
+}
+
 .form-group label {
   color: #ffffff;
   font-weight: 600;
@@ -29,7 +46,6 @@
   display: block;
 }
 
-/* Inputs: Dark semi-transparent fill with bright white placeholder text */
 .form-group input {
   width: 100%;
   background: rgba(15, 10, 8, 0.7); 
@@ -45,7 +61,7 @@
   color: rgba(255, 255, 255, 0.65); 
 }
 
-/* Button: Vibrant brown with drop shadow */
+/* Button */
 .btn-sign-in {
   background: #8b5a36;
   color: #ffffff;
@@ -61,4 +77,20 @@
 
 .btn-sign-in:hover {
   background: #a06940;
+}
+
+/* Modal Inputs & Labels Override */
+#crud-modal .form-group label {
+  color: #2c221e;
+  text-shadow: none;
+}
+
+#crud-modal .form-group input {
+  background: #f8f5f2;
+  border: 1px solid #d4c3b3;
+  color: #2c221e;
+}
+
+#crud-modal .form-group input::placeholder {
+  color: #8c7e73;
 }
