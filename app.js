@@ -103,10 +103,7 @@ function openAddModal() {
 
   if (modalTitle) modalTitle.innerText = '➕ Add New Item';
   if (itemForm) itemForm.reset();
-  if (modal) {
-    modal.classList.remove('hidden');
-    modal.style.display = 'flex';
-  }
+  if (modal) modal.classList.remove('hidden');
 }
 
 // Open Modal for Updating Item
@@ -115,7 +112,7 @@ function openEditModal(id) {
   if (!item) return;
 
   editingItemId = id;
-
+  
   const modalTitle = document.getElementById('modal-title');
   if (modalTitle) modalTitle.innerText = '✏️ Edit Item';
 
@@ -125,18 +122,12 @@ function openEditModal(id) {
   document.getElementById('item-unit').value = item.unit || 'pcs';
 
   const modal = document.getElementById('crud-modal');
-  if (modal) {
-    modal.classList.remove('hidden');
-    modal.style.display = 'flex';
-  }
+  if (modal) modal.classList.remove('hidden');
 }
 
 function closeModal() {
   const modal = document.getElementById('crud-modal');
-  if (modal) {
-    modal.classList.add('hidden');
-    modal.style.display = 'none';
-  }
+  if (modal) modal.classList.add('hidden');
 }
 
 // Save (Create or Update) Item
