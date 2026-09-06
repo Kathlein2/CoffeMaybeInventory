@@ -1,241 +1,64 @@
-:root {
-  --sidebar-bg: #1e1512;
-  --sidebar-card: #2a1f1a;
-  --sidebar-text: #d4c3b3;
-  --accent-brown: #8b5a36;
-  --accent-gold: #e2c19d;
-  --bg-cream: #f6f1eb;
-  --card-cream: #ffffff;
-  --text-dark: #2c221e;
-  --border-light: #e8ded5;
-  --radius-lg: 16px;
-  --radius-sm: 8px;
-  --font-cream: #fffdfa;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-body {
-  background-color: var(--sidebar-bg);
-  color: var(--text-dark);
-  min-height: 100vh;
-}
-
-/* Page View Display Toggle */
-.page-view {
-  display: none !important;
-  width: 100%;
-  min-height: 100vh;
-}
-
-.page-view.active {
-  display: flex !important;
-}
-
-.hidden {
-  display: none !important;
-}
-
-/* ================= LOGIN VIEW (CENTERED) ================= */
-.login-view {
-  min-height: 100vh;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-/* Login Main GIF Background */
-.login-view::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #120c0a url('https://i.pinimg.com/originals/3e/d8/3f/3ed83ff5893bfb480dc66c9c33fbf183.gif') center/cover no-repeat;
-  z-index: 0;
-}
-
-/* Glassmorphic Centered Card */
+/* Container: Slightly darker transparent base for contrast */
 .login-card {
   position: relative;
   z-index: 1;
   width: 100%;
   max-width: 420px;
-
-  /* Transparent background with no blur */
-  background: rgba(0, 0, 0, 0.2); /* Adjust opacity (0.0 for completely invisible, 0.2 for a light shade) */
-  border: 1px solid rgba(226, 193, 157, 0.35);
+  background: rgba(0, 0, 0, 0.45); /* Increased opacity slightly to separate from background */
+  border: 1px solid rgba(226, 193, 157, 0.4);
   border-radius: 20px;
   padding: 32px;
-  color: var(--font-cream);
+  color: #fff;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65);
 }
 
-.login-card input {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-/* Brand Header Banner */
+/* Header Banner: Clean dark fill instead of image transparency bleed */
 .brand-header {
-  text-align: center;
-  margin-bottom: 24px;
-  background: rgba(0, 0, 0, 0.45) url('https://i.pinimg.com/originals/d0/bf/c7/d0bfc76da6de38f91bcec23efe85082a.gif') center/cover no-repeat;
-  background-blend-mode: darken;
-  padding: 18px 12px;
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(226, 193, 157, 0.3);
+  background: rgba(20, 15, 12, 0.85); 
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
 }
 
-.brand-header h1 {
-  font-size: 1.5rem;
-  color: #ffffff;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  margin-top: 4px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
-}
-
-.brand-header p {
-  font-size: 0.72rem;
-  letter-spacing: 1.5px;
-  color: #fce4c8;
-  font-weight: 700;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 18px;
-}
-
+/* Labels: Drop shadow ensures text is legible over any background image */
 .form-group label {
-  font-size: 0.85rem;
-  color: var(--accent-gold);
+  color: #ffffff;
   font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  margin-bottom: 6px;
+  display: block;
 }
 
-input, select {
+/* Inputs: Dark semi-transparent fill with bright white placeholder text */
+.form-group input {
   width: 100%;
-  padding: 12px 14px;
-  border: 1px solid rgba(198, 162, 126, 0.4);
-  border-radius: var(--radius-sm);
-  font-size: 0.95rem;
-  outline: none;
-}
-
-input:focus, select:focus {
-  border-color: var(--accent-gold);
-}
-
-.btn-sign-in {
-  width: 100%;
+  background: rgba(15, 10, 8, 0.7); 
+  border: 1px solid rgba(226, 193, 157, 0.6);
+  border-radius: 8px;
   padding: 12px;
-  background: var(--accent-brown);
-  color: var(--font-cream);
-  border: 1px solid var(--accent-gold);
-  border-radius: var(--radius-sm);
-  font-weight: 700;
+  color: #ffffff;
   font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.65); 
+}
+
+/* Button: Vibrant brown with drop shadow */
+.btn-sign-in {
+  background: #8b5a36;
+  color: #ffffff;
+  font-weight: 700;
+  border: 1px solid #c6a27e;
+  border-radius: 8px;
+  padding: 12px;
+  width: 100%;
   cursor: pointer;
-  margin-top: 8px;
-  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  transition: background 0.2s ease;
 }
 
 .btn-sign-in:hover {
-  background: #a0683f;
-}
-
-/* ================= DASHBOARD LAYOUT ================= */
-.app-layout {
-  display: flex;
-  min-height: 100vh;
-}
-
-.sidebar {
-  width: 260px;
-  background-color: var(--sidebar-bg);
-  color: var(--sidebar-text);
-  padding: 24px 16px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border-right: 1px solid rgba(198, 162, 126, 0.2);
-}
-
-.sidebar-header::before {
-  content: "";
-  display: block;
-  width: 48px;
-  height: 48px;
-  margin: 0 auto 10px auto;
-  background: url('https://media.tenor.com/xCdlTi2ny88AAAAM/cute.gif') center/contain no-repeat;
-}
-
-/* User Profile Card in Sidebar */
-.user-profile-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--sidebar-card);
-  padding: 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(198, 162, 126, 0.15);
-  margin-top: 10px;
-}
-
-/* Dynamic Main Views with Unique Ghibli Backgrounds */
-.main-content {
-  flex: 1;
-  position: relative;
-  background: #f6f1eb url('https://i.pinimg.com/originals/9c/59/c2/9c59c25abfdd3b930c2f514c02bfef72.gif') center/cover no-repeat fixed;
-  padding: 32px;
-  overflow-y: auto;
-}
-
-.main-content.view-transactions {
-  background-image: url('https://i.pinimg.com/originals/75/a7/8b/75a78b9c3af5b1fd298a9e882300cb54.gif');
-}
-
-.main-content.view-suppliers {
-  background-image: url('https://i.pinimg.com/originals/3d/2d/41/3d2d416c53e6d0b2d6b157edf1e4b1db.gif');
-}
-
-/* Frosted Cream Overlay for Readability */
-.main-content::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 260px;
-  right: 0;
-  bottom: 0;
-  background: rgba(246, 241, 235, 0.90);
-  backdrop-filter: blur(4px);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.main-content > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* Input Fields inside Dashboard */
-.main-content input,
-.main-content select,
-.main-content option {
-  color: #2c221e !important;
-  background-color: #ffffff !important;
-  border: 1px solid var(--border-light);
+  background: #a06940;
 }
