@@ -8,48 +8,42 @@
 </head>
 <body>
 
-  <!-- LOGIN VIEW -->
- <!-- LOGIN VIEW -->
-<div id="view-login" class="page-view login-view active">
-  <video autoplay loop muted playsinline id="login-video-bg">
-    <source src="login-bg.mp4" type="video/mp4">
-  </video>
+  <!-- LOGIN VIEW (CENTERED) -->
+  <div id="view-login" class="page-view login-view active">
+    <div class="login-card">
+      <div class="brand-header">
+        <span style="font-size: 2.2rem;">☕</span>
+        <h1>COFFEE MAYBE</h1>
+        <p>INVENTORY MANAGER PORTAL</p>
+      </div>
 
-  <div class="login-card">
-    <div class="brand-header">
-      <span style="font-size: 2.2rem;">☕</span>
-      <h1>COFFEE MAYBE</h1>
-      <p>INVENTORY MANAGER PORTAL</p>
+      <form id="login-step-1">
+        <div class="form-group">
+          <label for="login-username">Username</label>
+          <input type="text" id="login-username" placeholder="Enter your username" required>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" id="login-btn" class="btn-sign-in">LOGIN</button>
+      </form>
+
+      <form id="login-step-2" class="hidden">
+        <div class="form-group">
+          <label for="login-otp">Verification Code</label>
+          <input type="text" id="login-otp" placeholder="Enter 6-digit OTP">
+        </div>
+        <button type="submit" class="btn-sign-in">VERIFY OTP</button>
+      </form>
     </div>
-
-    <form id="login-step-1">
-      <div class="form-group">
-        <label for="login-username">Username</label>
-        <input type="text" id="login-username" placeholder="Enter your username" required>
-      </div>
-      <div class="form-group">
-        <label for="login-password">Password</label>
-        <input type="password" id="login-password" placeholder="Enter your password" required>
-      </div>
-      <button type="submit" id="login-btn" class="btn-sign-in">LOGIN</button>
-    </form>
-
-    <form id="login-step-2" class="hidden">
-      <div class="form-group">
-        <label for="login-otp">Verification Code</label>
-        <input type="text" id="login-otp" placeholder="Enter 6-digit OTP">
-      </div>
-      <button type="submit" class="btn-sign-in">VERIFY OTP</button>
-    </form>
   </div>
-</div>
 
   <!-- DASHBOARD VIEW -->
   <div id="view-dashboard" class="page-view app-layout">
     <aside class="sidebar">
       <div>
-        <div class="brand-header">
-          <span style="font-size: 2rem;">☕</span>
+        <div class="brand-header sidebar-header">
           <h1>Coffee Maybe</h1>
           <p>INVENTORY SYSTEM</p>
         </div>
@@ -65,8 +59,8 @@
         <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 20px;">
           <li><button class="btn-sign-in" onclick="showView('view-dashboard')">📊 Dashboard</button></li>
           <li><button class="btn-sign-in" onclick="showView('view-inventory')">📦 Inventory</button></li>
-          <li><button class="btn-sign-in" onclick="openTransaction('Stock In')">📥 Stock In</button></li>
-          <li><button class="btn-sign-in" onclick="openTransaction('Stock Out')">📤 Stock Out</button></li>
+          <li><button class="btn-sign-in" onclick="showView('view-transactions')">🔄 Stock Movements</button></li>
+          <li><button class="btn-sign-in" onclick="showView('view-suppliers')">🚚 Supplier Directory</button></li>
         </ul>
       </div>
       <button class="btn-sign-in" onclick="logout()">🚪 Logout</button>
@@ -155,16 +149,15 @@
   <div id="view-inventory" class="page-view app-layout">
     <aside class="sidebar">
       <div>
-        <div class="brand-header">
-          <span style="font-size: 2rem;">☕</span>
+        <div class="brand-header sidebar-header">
           <h1>Coffee Maybe</h1>
           <p>INVENTORY SYSTEM</p>
         </div>
         <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 20px;">
           <li><button class="btn-sign-in" onclick="showView('view-dashboard')">📊 Dashboard</button></li>
           <li><button class="btn-sign-in" onclick="showView('view-inventory')">📦 Inventory</button></li>
-          <li><button class="btn-sign-in" onclick="openTransaction('Stock In')">📥 Stock In</button></li>
-          <li><button class="btn-sign-in" onclick="openTransaction('Stock Out')">📤 Stock Out</button></li>
+          <li><button class="btn-sign-in" onclick="showView('view-transactions')">🔄 Stock Movements</button></li>
+          <li><button class="btn-sign-in" onclick="showView('view-suppliers')">🚚 Supplier Directory</button></li>
         </ul>
       </div>
       <button class="btn-sign-in" onclick="logout()">🚪 Logout</button>
@@ -201,34 +194,33 @@
     </main>
   </div>
 
-  <!-- TRANSACTION VIEW (STOCK IN / STOCK OUT) -->
-  <div id="view-transaction" class="page-view app-layout">
+  <!-- COMBINED STOCK MOVEMENTS VIEW -->
+  <div id="view-transactions" class="page-view app-layout">
     <aside class="sidebar">
       <div>
-        <div class="brand-header">
-          <span style="font-size: 2rem;">☕</span>
+        <div class="brand-header sidebar-header">
           <h1>Coffee Maybe</h1>
           <p>INVENTORY SYSTEM</p>
         </div>
         <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 20px;">
           <li><button class="btn-sign-in" onclick="showView('view-dashboard')">📊 Dashboard</button></li>
           <li><button class="btn-sign-in" onclick="showView('view-inventory')">📦 Inventory</button></li>
-          <li><button class="btn-sign-in" onclick="openTransaction('Stock In')">📥 Stock In</button></li>
-          <li><button class="btn-sign-in" onclick="openTransaction('Stock Out')">📤 Stock Out</button></li>
+          <li><button class="btn-sign-in" onclick="showView('view-transactions')">🔄 Stock Movements</button></li>
+          <li><button class="btn-sign-in" onclick="showView('view-suppliers')">🚚 Supplier Directory</button></li>
         </ul>
       </div>
       <button class="btn-sign-in" onclick="logout()">🚪 Logout</button>
     </aside>
 
-    <main class="main-content">
-      <div style="background: #fff; border-radius: 12px; padding: 24px; border: 1px solid #e8ded5; max-width: 500px;">
-        <h2 id="trans-title" style="font-family: Georgia, serif; margin-bottom: 20px;">Stock Transaction</h2>
-        <form onsubmit="event.preventDefault(); alert('Transaction Recorded!'); showView('view-dashboard');">
+    <main class="main-content view-transactions">
+      <div style="background: #fff; border-radius: 12px; padding: 24px; border: 1px solid #e8ded5; max-width: 520px;">
+        <h2 style="font-family: Georgia, serif; margin-bottom: 20px;">🔄 Record Stock Movement</h2>
+        <form onsubmit="event.preventDefault(); alert('Stock Movement Recorded!'); showView('view-dashboard');">
           <div class="form-group">
-            <label style="color: #2c221e;">Transaction Type</label>
+            <label style="color: #2c221e;">Movement Type</label>
             <select id="trans-type">
-              <option value="Stock In">Stock In</option>
-              <option value="Stock Out">Stock Out</option>
+              <option value="IN">📥 Stock In (Receive Items)</option>
+              <option value="OUT">📤 Stock Out (Use / Dispense Items)</option>
             </select>
           </div>
           <div class="form-group">
@@ -239,8 +231,57 @@
             <label style="color: #2c221e;">Quantity</label>
             <input type="number" placeholder="Enter quantity" required>
           </div>
-          <button type="submit" class="btn-sign-in" style="margin-top: 10px;">SUBMIT TRANSACTION</button>
+          <button type="submit" class="btn-sign-in" style="margin-top: 10px;">RECORD MOVEMENT</button>
         </form>
+      </div>
+    </main>
+  </div>
+
+  <!-- SUPPLIER DIRECTORY VIEW -->
+  <div id="view-suppliers" class="page-view app-layout">
+    <aside class="sidebar">
+      <div>
+        <div class="brand-header sidebar-header">
+          <h1>Coffee Maybe</h1>
+          <p>INVENTORY SYSTEM</p>
+        </div>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 20px;">
+          <li><button class="btn-sign-in" onclick="showView('view-dashboard')">📊 Dashboard</button></li>
+          <li><button class="btn-sign-in" onclick="showView('view-inventory')">📦 Inventory</button></li>
+          <li><button class="btn-sign-in" onclick="showView('view-transactions')">🔄 Stock Movements</button></li>
+          <li><button class="btn-sign-in" onclick="showView('view-suppliers')">🚚 Supplier Directory</button></li>
+        </ul>
+      </div>
+      <button class="btn-sign-in" onclick="logout()">🚪 Logout</button>
+    </aside>
+
+    <main class="main-content view-suppliers">
+      <div style="background: #fff; border-radius: 12px; padding: 24px; border: 1px solid #e8ded5;">
+        <h2 style="font-family: Georgia, serif; margin-bottom: 20px;">🚚 Supplier Directory</h2>
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead>
+            <tr style="border-bottom: 1px solid #e8ded5; color: #8c7e73; font-size: 0.85rem;">
+              <th style="padding: 12px;">Supplier Name</th>
+              <th style="padding: 12px;">Category</th>
+              <th style="padding: 12px;">Contact Person</th>
+              <th style="padding: 12px;">Phone Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid #f2ebe4;">
+              <td style="padding: 12px; font-weight: 600;">Highland Roasters Inc.</td>
+              <td style="padding: 12px; color: #666;">Coffee Beans</td>
+              <td style="padding: 12px;">Kiki Delivery</td>
+              <td style="padding: 12px;">+63 917 555 0192</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f2ebe4;">
+              <td style="padding: 12px; font-weight: 600;">Fresh Farms Dairy</td>
+              <td style="padding: 12px; color: #666;">Dairy Products</td>
+              <td style="padding: 12px;">Howl Pendragon</td>
+              <td style="padding: 12px;">+63 918 555 0143</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </main>
   </div>
