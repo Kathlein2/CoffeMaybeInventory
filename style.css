@@ -71,8 +71,8 @@ body {
   width: 100%;
   max-width: 420px;
 
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  /* Transparent background with no blur */
+  background: rgba(0, 0, 0, 0.2); /* Adjust opacity (0.0 for completely invisible, 0.2 for a light shade) */
   border: 1px solid rgba(226, 193, 157, 0.35);
   border-radius: 20px;
   padding: 32px;
