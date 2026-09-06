@@ -77,7 +77,7 @@
         <div class="stat-card" style="background: #fff; padding: 18px; border-radius: 12px; border: 1px solid #e8ded5; display: flex; align-items: center; gap: 14px;">
           <div style="font-size: 1.5rem; background: #2b1d16; color: #c6a27e; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">📦</div>
           <div>
-            <div id="stat-total-items" style="font-size: 1.4rem; font-weight: 700;">42</div>
+            <div id="stat-total-items" style="font-size: 1.4rem; font-weight: 700;">0</div>
             <div style="font-size: 0.8rem; color: #7a6e65;">Total Items</div>
           </div>
         </div>
@@ -85,7 +85,7 @@
         <div class="stat-card" style="background: #fff; padding: 18px; border-radius: 12px; border: 1px solid #e8ded5; display: flex; align-items: center; gap: 14px;">
           <div style="font-size: 1.5rem; background: #2b1d16; color: #c6a27e; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">⚠️</div>
           <div>
-            <div id="stat-low-stock" style="font-size: 1.4rem; font-weight: 700;">6</div>
+            <div id="stat-low-stock" style="font-size: 1.4rem; font-weight: 700;">1</div>
             <div style="font-size: 0.8rem; color: #7a6e65;">Low Stock Items</div>
           </div>
         </div>
@@ -113,18 +113,7 @@
               </tr>
             </thead>
             <tbody id="dashboard-inventory-rows">
-              <tr style="border-bottom: 1px solid #f2ebe4;">
-                <td style="padding: 12px 10px; font-weight: 600;">Arabica Beans</td>
-                <td style="padding: 12px 10px; color: #666;">Coffee Beans</td>
-                <td style="padding: 12px 10px;">25</td>
-                <td style="padding: 12px 10px;">kg</td>
-              </tr>
-              <tr style="border-bottom: 1px solid #f2ebe4;">
-                <td style="padding: 12px 10px; font-weight: 600;">Whole Milk</td>
-                <td style="padding: 12px 10px; color: #666;">Dairy</td>
-                <td style="padding: 12px 10px;">8</td>
-                <td style="padding: 12px 10px;">L</td>
-              </tr>
+              <!-- Rendered via app.js -->
             </tbody>
           </table>
         </div>
@@ -165,7 +154,10 @@
 
     <main class="main-content">
       <div style="background: #fff; border-radius: 12px; padding: 24px; border: 1px solid #e8ded5;">
-        <h2 style="font-family: Georgia, serif; margin-bottom: 20px;">📦 Manage Inventory</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h2 style="font-family: Georgia, serif; margin: 0;">📦 Manage Inventory</h2>
+          <button class="btn-sign-in" onclick="openAddModal()" style="width: auto; padding: 8px 16px;">+ Add Item</button>
+        </div>
         <table style="width: 100%; border-collapse: collapse; text-align: left;">
           <thead>
             <tr style="border-bottom: 1px solid #e8ded5; color: #8c7e73; font-size: 0.85rem;">
@@ -173,21 +165,11 @@
               <th style="padding: 12px;">Category</th>
               <th style="padding: 12px;">Quantity</th>
               <th style="padding: 12px;">Unit</th>
+              <th style="padding: 12px;">Actions</th>
             </tr>
           </thead>
           <tbody id="full-inventory-rows">
-            <tr style="border-bottom: 1px solid #f2ebe4;">
-              <td style="padding: 12px; font-weight: 600;">Arabica Beans</td>
-              <td style="padding: 12px; color: #666;">Coffee Beans</td>
-              <td style="padding: 12px;">25</td>
-              <td style="padding: 12px;">kg</td>
-            </tr>
-            <tr style="border-bottom: 1px solid #f2ebe4;">
-              <td style="padding: 12px; font-weight: 600;">Whole Milk</td>
-              <td style="padding: 12px; color: #666;">Dairy</td>
-              <td style="padding: 12px;">8</td>
-              <td style="padding: 12px;">L</td>
-            </tr>
+            <!-- Rendered dynamically with Edit/Delete buttons via app.js -->
           </tbody>
         </table>
       </div>
@@ -215,7 +197,7 @@
     <main class="main-content view-transactions">
       <div style="background: #fff; border-radius: 12px; padding: 24px; border: 1px solid #e8ded5; max-width: 520px;">
         <h2 style="font-family: Georgia, serif; margin-bottom: 20px;">🔄 Record Stock Movement</h2>
-        <form onsubmit="event.preventDefault(); alert('Stock Movement Recorded!'); showView('view-dashboard');">
+        <form id="transaction-form">
           <div class="form-group">
             <label style="color: #2c221e;">Movement Type</label>
             <select id="trans-type">
@@ -225,11 +207,11 @@
           </div>
           <div class="form-group">
             <label style="color: #2c221e;">Item Name</label>
-            <input type="text" placeholder="e.g. Arabica Beans" required>
+            <input type="text" id="trans-item-name" placeholder="e.g. Arabica Beans" required>
           </div>
           <div class="form-group">
             <label style="color: #2c221e;">Quantity</label>
-            <input type="number" placeholder="Enter quantity" required>
+            <input type="number" id="trans-quantity" placeholder="Enter quantity" required>
           </div>
           <button type="submit" class="btn-sign-in" style="margin-top: 10px;">RECORD MOVEMENT</button>
         </form>
@@ -284,6 +266,35 @@
         </table>
       </div>
     </main>
+  </div>
+
+  <!-- CRUD MODAL POPUP -->
+  <div id="crud-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+    <div style="background: #fff; padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; color: #2c221e;">
+      <h3 id="modal-title" style="margin-bottom: 16px; font-family: Georgia, serif;">Add / Edit Item</h3>
+      <form id="item-form">
+        <div class="form-group">
+          <label style="color: #2c221e;">Item Name</label>
+          <input type="text" id="item-name" required placeholder="e.g. Arabica Beans">
+        </div>
+        <div class="form-group">
+          <label style="color: #2c221e;">Category</label>
+          <input type="text" id="item-category" required placeholder="e.g. Coffee Beans">
+        </div>
+        <div class="form-group">
+          <label style="color: #2c221e;">Quantity</label>
+          <input type="number" id="item-qty" required placeholder="e.g. 10">
+        </div>
+        <div class="form-group">
+          <label style="color: #2c221e;">Unit</label>
+          <input type="text" id="item-unit" required placeholder="e.g. kg, L, packs">
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 16px;">
+          <button type="submit" class="btn-sign-in">Save</button>
+          <button type="button" class="btn-sign-in" onclick="closeModal()" style="background: #7a6e65;">Cancel</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <script src="app.js"></script>
