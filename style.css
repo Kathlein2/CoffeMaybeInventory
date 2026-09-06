@@ -20,226 +20,199 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+/* General Layout & Background */
 body {
-  background-color: var(--sidebar-bg);
-  color: var(--text-dark);
-  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f4f0eb;
+  color: #333;
 }
 
-/* Page View Display Toggle */
+/* Page Views */
 .page-view {
-  display: none !important;
-  width: 100%;
-  min-height: 100vh;
+  display: none;
 }
 
 .page-view.active {
-  display: flex !important;
+  display: flex;
 }
 
-.hidden {
-  display: none !important;
-}
-
-/* ================= LOGIN VIEW (CENTERED) ================= */
 .login-view {
   min-height: 100vh;
-  position: relative;
-  overflow: hidden;
-  display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  box-sizing: border-box;
 }
 
-/* Login Main GIF Background */
-.login-view::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #120c0a url('https://i.pinimg.com/originals/3e/d8/3f/3ed83ff5893bfb480dc66c9c33fbf183.gif') center/cover no-repeat;
-  z-index: 0;
-}
-
-/* Glassmorphic Centered Card */
+/* Centered Login Card */
 .login-card {
-  position: relative;
-  z-index: 1;
   width: 100%;
-  max-width: 420px;
-  background: rgba(20, 14, 11, 0.65); /* Darker transparent fill for optimal image isolation */
-  border: 1px solid rgba(226, 193, 157, 0.4);
-  border-radius: 20px;
-  padding: 32px;
-  color: var(--font-cream);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.75);
+  max-width: 380px;
+  background: #808080;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  box-sizing: border-box;
 }
 
-/* Login Inputs Fill & Typography Fixes */
-.login-card input {
-  color: #ffffff !important;
-  background: rgba(12, 8, 6, 0.75) !important;
-  border: 1px solid rgba(226, 193, 157, 0.5);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.login-card input::placeholder {
-  color: rgba(226, 193, 157, 0.75) !important;
-}
-
-/* Brand Header Banner */
+/* Brand Header */
 .brand-header {
-  text-align: center;
+  background: #231c19;
+  border-radius: 16px;
+  padding: 24px 20px;
+  text-align: left;
   margin-bottom: 24px;
-  background-blend-mode: darken;
-  padding: 18px 12px;
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(226, 193, 157, 0.4);
-  overflow: hidden;
 }
 
 .brand-header h1 {
-  font-size: 1.5rem;
-  color: #ffffff;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  margin-top: 4px;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
+  margin: 12px 0 6px 0;
+  font-family: Georgia, serif;
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+  color: #f4e8c1;
 }
 
 .brand-header p {
-  font-size: 0.72rem;
-  letter-spacing: 1.5px;
-  color: #fce4c8;
-  font-weight: 700;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  color: #ffffff;
+  font-weight: 600;
 }
 
+/* Form Groups, Inputs, & Dropdowns */
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
   margin-bottom: 18px;
 }
 
 .form-group label {
-  font-size: 0.85rem;
-  color: var(--accent-gold);
-  font-weight: 600;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #ffffff;
 }
 
-input, select {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid rgba(198, 162, 126, 0.4);
-  border-radius: var(--radius-sm);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #e8f0fe;
+  color: #1a1a1a;
   font-size: 0.95rem;
+  box-sizing: border-box;
   outline: none;
 }
 
-input:focus, select:focus {
-  border-color: var(--accent-gold);
-}
-
+/* Sign-In & Action Buttons */
 .btn-sign-in {
   width: 100%;
   padding: 12px;
-  background: var(--accent-brown);
-  color: var(--font-cream);
-  border: 1px solid var(--accent-gold);
-  border-radius: var(--radius-sm);
+  background-color: #925832;
+  color: #ffffff;
   font-weight: 700;
-  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  margin-top: 8px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-  transition: all 0.2s ease;
+  margin-top: 10px;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease;
 }
 
 .btn-sign-in:hover {
-  background: #a0683f;
-  transform: translateY(-1px);
+  background-color: #7a4726;
 }
 
-/* ================= DASHBOARD LAYOUT ================= */
+/* Layout & Main Content */
 .app-layout {
   display: flex;
   min-height: 100vh;
+  width: 100%;
 }
 
 .sidebar {
   width: 260px;
-  background-color: var(--sidebar-bg);
-  color: var(--sidebar-text);
-  padding: 24px 16px;
+  background: #231c19;
+  color: #fff;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-right: 1px solid rgba(198, 162, 126, 0.2);
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
-.sidebar-header::before {
-  content: "";
-  display: block;
-  width: 48px;
-  height: 48px;
-  margin: 0 auto 10px auto;
-  background: url('https://media.tenor.com/xCdlTi2ny88AAAAM/cute.gif') center/contain no-repeat;
-}
-
-/* User Profile Card in Sidebar */
-.user-profile-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--sidebar-card);
-  padding: 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(198, 162, 126, 0.15);
-  margin-top: 10px;
-}
-
-/* Dynamic Main Views with Unique Ghibli Backgrounds */
 .main-content {
-  flex: 1;
-  position: relative;
-  background: #f6f1eb url('https://i.pinimg.com/originals/9c/59/c2/9c59c25abfdd3b930c2f514c02bfef72.gif') center/cover no-repeat fixed;
-  padding: 32px;
-  overflow-y: auto;
+  flex-grow: 1;
+  padding: 24px;
+  box-sizing: border-box;
+  overflow-x: auto;
 }
 
-.main-content.view-transactions {
-  background-image: url('https://i.pinimg.com/originals/75/a7/8b/75a78b9c3af5b1fd298a9e882300cb54.gif');
+/* Utility Classes */
+.hidden {
+  display: none !important;
 }
 
-.main-content.view-suppliers {
-  background-image: url('https://i.pinimg.com/originals/3d/2d/41/3d2d416c53e6d0b2d6b157edf1e4b1db.gif');
+/* Modal Styling Overrides */
+#crud-modal .form-group label {
+  color: #2c221e;
 }
 
-/* Frosted Cream Overlay for Readability */
-.main-content::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 260px;
-  right: 0;
-  bottom: 0;
-  background: rgba(246, 241, 235, 0.90);
-  backdrop-filter: blur(4px);
-  pointer-events: none;
-  z-index: 0;
+#crud-modal .form-group input,
+#crud-modal .form-group select {
+  background-color: #f8f5f2;
+  border: 1px solid #d4c3b3;
+  color: #2c221e;
 }
 
-.main-content > * {
-  position: relative;
-  z-index: 1;
+/* Table Container Responsiveness */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
 }
 
+/* ================= MOBILE RESPONSIVENESS ================= */
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-height: auto;
+  }
+
+  .login-view {
+    padding: 16px;
+  }
+
+  .login-card {
+    max-width: 100%;
+    padding: 16px;
+  }
+
+  .main-content {
+    padding: 16px;
+  }
+
+  /* Grid layout fallbacks for mobile */
+  .stats-grid, 
+  div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Modal layout on mobile */
+  #crud-modal > div {
+    width: 90% !important;
+    padding: 16px !important;
+  }
+}
 /* Input Fields inside Dashboard Views */
 .main-content input,
 .main-content select,
