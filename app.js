@@ -6,6 +6,7 @@ let currentInventory = [
 ];
 
 let editingItemId = null;
+let isSubmitting = false;
 
 // Initialize Event Listeners on Load
 document.addEventListener('DOMContentLoaded', () => {
@@ -35,39 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
     itemForm.addEventListener('submit', saveItem);
   }
 
- function openEditModal(id) {
-  const item = currentInventory.find(i => String(i.id) === String(id));
-  if (!item) return;
-
-  editingItemId = String(id);
-  
-  // Fill modal inputs with existing data
-  const nameInput = document.getElementById('item-name-input');
-  const catInput = document.getElementById('item-category');
-  const qtyInput = document.getElementById('item-qty');
-  const unitInput = document.getElementById('item-unit');
-
-  if (nameInput) nameInput.value = item.name;
-  if (catInput) catInput.value = item.category;
-  if (qtyInput) qtyInput.value = item.quantity;
-  if (unitInput) unitInput.value = item.unit || 'pcs';
-
-  const modal = document.getElementById('crud-modal');
-  if (modal) {
-    modal.classList.remove('hidden');
-    modal.style.display = 'flex';
-  }
-}
-
-function deleteItem(id) {
-  if (!confirm('Are you sure you want to delete this item?')) return;
-
-  currentInventory = currentInventory.filter(item => String(item.id) !== String(id));
-  
-  // Refresh UI tables and dropdowns
   renderInventoryTables();
   populateDropdowns();
-}
+});
 
 // Navigation Controller
 function showView(viewId) {
@@ -115,8 +86,8 @@ function renderInventoryTables() {
         <td style="padding: 12px;">${item.quantity}</td>
         <td style="padding: 12px;">${item.unit || 'pcs'}</td>
         <td style="padding: 12px;">
-          <button onclick="openEditModal(${item.id})" style="background: #8b5a36; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; margin-right: 4px;">✏️ Edit</button>
-          <button onclick="deleteItem(${item.id})" style="background: #a93226; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">🗑️ Delete</button>
+          <button type="button" onclick="openEditModal('${item.id}')" style="background: #8b5a36; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; margin-right: 4px;">✏️ Edit</button>
+          <button type="button" onclick="deleteItem('${item.id}')" style="background: #a93226; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">🗑️ Delete</button>
         </td>
       </tr>
     `).join('');
@@ -160,7 +131,7 @@ function openAddModal() {
 }
 
 function openEditModal(id) {
-  const item = currentInventory.find(i => i.id === id);
+  const item = currentInventory.find(i => String(i.id) === String(id));
   if (!item) return;
 
   editingItemId = id;
@@ -177,9 +148,13 @@ function openEditModal(id) {
   }
   if (nameSelect) nameSelect.style.display = 'none';
 
-  document.getElementById('item-category').value = item.category;
-  document.getElementById('item-qty').value = item.quantity;
-  document.getElementById('item-unit').value = item.unit || 'pcs';
+  const catInput = document.getElementById('item-category');
+  const qtyInput = document.getElementById('item-qty');
+  const unitInput = document.getElementById('item-unit');
+
+  if (catInput) catInput.value = item.category;
+  if (qtyInput) qtyInput.value = item.quantity;
+  if (unitInput) unitInput.value = item.unit || 'pcs';
 
   if (modal) {
     modal.classList.remove('hidden');
@@ -205,7 +180,7 @@ async function saveItem(e) {
 
   if (editingItemId) {
     currentInventory = currentInventory.map(item =>
-      item.id === editingItemId ? { ...item, name, category, quantity, unit } : item
+      String(item.id) === String(editingItemId) ? { ...item, name, category, quantity, unit } : item
     );
   } else {
     const newItem = { id: Date.now(), name, category, quantity, unit };
@@ -237,7 +212,7 @@ async function saveItem(e) {
 async function deleteItem(id) {
   if (!confirm('Are you sure you want to delete this item?')) return;
 
-  currentInventory = currentInventory.filter(item => item.id !== id);
+  currentInventory = currentInventory.filter(item => String(item.id) !== String(id));
   renderInventoryTables();
   populateDropdowns();
 
@@ -303,8 +278,6 @@ async function handleTransactionSubmit(e) {
 }
 
 // ================= AUTHENTICATION & API =================
-
-let isSubmitting = false;
 
 async function handleLoginSubmit() {
   if (isSubmitting) return;
@@ -404,4 +377,4 @@ async function loadInventoryData() {
 
 function logout() {
   location.reload();
-}s
+}
