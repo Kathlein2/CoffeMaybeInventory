@@ -1,388 +1,173 @@
-const API_URL = '/api/apps-script';
-
 let currentInventory = [
-  { id: 1, name: 'Arabica Beans', category: 'Coffee Beans', quantity: 25, unit: 'kg' },
-  { id: 2, name: 'Whole Milk', category: 'Dairy', quantity: 8, unit: 'L' }
+  { id: '1', name: 'Coffee Powder', quantity: 8, unit: 'kg', category: 'Beans', status: 'In Stock' },
+  { id: '2', name: 'Fresh Milk', quantity: 2, unit: 'L', category: 'Dairy', status: 'Low Stock' },
+  { id: '3', name: 'Milk tea powder', quantity: 7, unit: 'kg', category: 'Powder', status: 'In Stock' },
+  { id: '4', name: 'Tapioca Pearls', quantity: 10, unit: 'packs', category: 'Toppings', status: 'In Stock' },
+  { id: '5', name: 'Brown Sugar', quantity: 6, unit: 'kg', category: 'Syrups', status: 'In Stock' },
+  { id: '6', name: 'Coffee Syrup', quantity: 5, unit: 'bottles', category: 'Syrups', status: 'In Stock' }
 ];
 
+let selectedItemId = null;
 let editingItemId = null;
 
-// Initialize Event Listeners on Load
 document.addEventListener('DOMContentLoaded', () => {
-  const step1Form = document.getElementById('login-step-1');
-  if (step1Form) {
-    step1Form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      handleLoginSubmit();
-    });
-  }
-
-  const step2Form = document.getElementById('login-step-2');
-  if (step2Form) {
-    step2Form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      handleVerifyOtpSubmit();
-    });
-  }
-
-  const transForm = document.getElementById('transaction-form');
-  if (transForm) {
-    transForm.addEventListener('submit', handleTransactionSubmit);
-  }
-
-  const itemForm = document.getElementById('item-form');
-  if (itemForm) {
-    itemForm.addEventListener('submit', saveItem);
-  }
-
-  renderInventoryTables();
-  populateDropdowns();
-  if (dashRows) {
-    dashRows.innerHTML = currentInventory.map(item => `
-      <tr style="border-bottom: 1px solid #f2ebe4;">
-        <td style="padding: 12px 10px; font-weight: 600;">${item.name}</td>
-        <td style="padding: 12px 10px; color: #666;">${item.category}</td>
-        <td style="padding: 12px 10px;">${item.quantity}</td>
-        <td style="padding: 12px 10px;">${item.unit || 'pcs'}</td>
-        <td style="padding: 12px 10px;">
-          <button onclick="openEditModal('${item.id}')" style="background: #8b5a36; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-right: 4px;">✏️ Edit</button>
-          <button onclick="deleteItem('${item.id}')" style="background: #a93226; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">🗑️ Delete</button>
-        </td>
-      </tr>
-    `).join('');
-  }
-});
-
-// Navigation Controller
-function showView(viewId) {
-  document.querySelectorAll('.page-view').forEach(view => {
-    view.classList.remove('active');
+  const step1 = document.getElementById('login-step-1');
+  if (step1) step1.addEventListener('submit', (e) => {
+    e.preventDefault();
+    document.getElementById('view-login').classList.add('hidden');
+    document.getElementById('app-layout').classList.remove('hidden');
+    renderInventory();
   });
 
-  const targetView = document.getElementById(viewId);
-  if (targetView) {
-    targetView.classList.add('active');
-  }
+  const transForm = document.getElementById('transaction-form');
+  if (transForm) transForm.addEventListener('submit', handleTransaction);
 
-  if (viewId === 'view-dashboard' || viewId === 'view-inventory' || viewId === 'view-transactions') {
-    populateDropdowns();
-    loadInventoryData();
-  }
+  const itemForm = document.getElementById('item-form');
+  if (itemForm) itemForm.addEventListener('submit', saveItem);
+
+  renderInventory();
+  populateDropdowns();
+});
+
+function navigateTo(viewId) {
+  document.querySelectorAll('.sub-view').forEach(view => view.classList.add('hidden'));
+  const target = document.getElementById(viewId);
+  if (target) target.classList.remove('hidden');
+  closeSidebar();
 }
 
-// Populate Item Dropdowns for Select Controls
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('active');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('active');
+}
+
+function renderInventory() {
+  const tbody = document.getElementById('inventory-table-body');
+  if (!tbody) return;
+
+  tbody.innerHTML = currentInventory.map(item => `
+    <tr class="${selectedItemId === item.id ? 'selected' : ''}" onclick="selectRow('${item.id}')">
+      <td><strong>${item.name}</strong></td>
+      <td>${item.quantity}</td>
+      <td>${item.unit}</td>
+      <td><span style="color: ${item.quantity <= 3 ? '#a93226' : '#27ae60'}; font-weight: bold;">${item.quantity <= 3 ? 'Low Stock' : 'In Stock'}</span></td>
+    </tr>
+  `).join('');
+
+  document.getElementById('stat-total-items').innerText = currentInventory.length;
+  document.getElementById('stat-low-stock').innerText = currentInventory.filter(i => i.quantity <= 3).length;
+}
+
+function selectRow(id) {
+  selectedItemId = id;
+  renderInventory();
+}
+
+function filterInventory() {
+  const query = document.getElementById('inventory-search').value.toLowerCase();
+  const rows = document.querySelectorAll('#inventory-table-body tr');
+  
+  rows.forEach(row => {
+    const text = row.innerText.toLowerCase();
+    row.style.display = text.includes(query) ? '' : 'none';
+  });
+}
+
 function populateDropdowns() {
-  const transSelect = document.getElementById('trans-item-select');
-  if (transSelect) {
-    transSelect.innerHTML = currentInventory.length
-      ? currentInventory.map(item => `<option value="${item.name}">${item.name} (${item.quantity} ${item.unit || 'pcs'})</option>`).join('')
-      : '<option value="">No items available</option>';
-  }
+  const select = document.getElementById('trans-item-select');
+  if (!select) return;
 
-  const editSelect = document.getElementById('item-name-select');
-  if (editSelect) {
-    editSelect.innerHTML = currentInventory.map(item => `<option value="${item.id}">${item.name}</option>`).join('');
-  }
+  select.innerHTML = currentInventory.map(item => `
+    <option value="${item.id}">${item.name} (${item.quantity} ${item.unit})</option>
+  `).join('');
 }
 
-// ================= CRUD & TABLE RENDERING =================
+function openTransactionModal(type) {
+  navigateTo('view-transactions');
+  const typeSelect = document.getElementById('trans-type');
+  if (typeSelect) typeSelect.value = type;
+}
 
-function renderInventoryTables() {
-  const dashRows = document.getElementById('dashboard-inventory-rows');
-  const fullRows = document.getElementById('full-inventory-rows');
+function handleTransaction(e) {
+  e.preventDefault();
+  const itemId = document.getElementById('trans-item-select').value;
+  const qty = parseFloat(document.getElementById('trans-quantity').value);
+  const type = document.getElementById('trans-type').value;
 
-  if (fullRows) {
-    fullRows.innerHTML = currentInventory.map(item => `
-      <tr style="border-bottom: 1px solid #f2ebe4;">
-        <td style="padding: 12px; font-weight: 600;">${item.name}</td>
-        <td style="padding: 12px; color: #666;">${item.category}</td>
-        <td style="padding: 12px;">${item.quantity}</td>
-        <td style="padding: 12px;">${item.unit || 'pcs'}</td>
-        <td style="padding: 12px;">
-          <button onclick="openEditModal(${item.id})" style="background: #8b5a36; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; margin-right: 4px;">✏️ Edit</button>
-          <button onclick="deleteItem(${item.id})" style="background: #a93226; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">🗑️ Delete</button>
-        </td>
-      </tr>
-    `).join('');
-  }
+  currentInventory = currentInventory.map(item => {
+    if (item.id === itemId) {
+      const updatedQty = type === 'IN' ? item.quantity + qty : Math.max(0, item.quantity - qty);
+      return { ...item, quantity: updatedQty };
+    }
+    return item;
+  });
 
-  if (dashRows) {
-    dashRows.innerHTML = currentInventory.slice(0, 5).map(item => `
-      <tr style="border-bottom: 1px solid #f2ebe4;">
-        <td style="padding: 12px 10px; font-weight: 600;">${item.name}</td>
-        <td style="padding: 12px 10px; color: #666;">${item.category}</td>
-        <td style="padding: 12px 10px;">${item.quantity}</td>
-        <td style="padding: 12px 10px;">${item.unit || 'pcs'}</td>
-      </tr>
-    `).join('');
-  }
-
-  const totalItemsElem = document.getElementById('stat-total-items');
-  if (totalItemsElem) {
-    totalItemsElem.innerText = `${currentInventory.length} Total Items`;
-  }
+  renderInventory();
+  populateDropdowns();
+  alert('Transaction saved successfully!');
+  navigateTo('view-dashboard');
 }
 
 function openAddModal() {
   editingItemId = null;
-  const modalTitle = document.getElementById('modal-title');
-  const itemForm = document.getElementById('item-form');
-  const modal = document.getElementById('crud-modal');
-  const nameInput = document.getElementById('item-name-input');
-  const nameSelect = document.getElementById('item-name-select');
-
-  if (modalTitle) modalTitle.innerText = '➕ Add New Item';
-  if (itemForm) itemForm.reset();
-
-  if (nameInput) nameInput.style.display = 'block';
-  if (nameSelect) nameSelect.style.display = 'none';
-
-  if (modal) {
-    modal.classList.remove('hidden');
-    modal.style.display = 'flex';
-  }
+  document.getElementById('modal-title').innerText = 'Add Item';
+  document.getElementById('item-form').reset();
+  document.getElementById('crud-modal').classList.remove('hidden');
 }
 
-function openEditModal(id) {
-  const item = currentInventory.find(i => i.id === id);
+function openSelectedEdit() {
+  if (!selectedItemId) {
+    alert('Please select an item from the table first.');
+    return;
+  }
+  const item = currentInventory.find(i => i.id === selectedItemId);
   if (!item) return;
 
-  editingItemId = id;
-  const modalTitle = document.getElementById('modal-title');
-  const modal = document.getElementById('crud-modal');
-  const nameInput = document.getElementById('item-name-input');
-  const nameSelect = document.getElementById('item-name-select');
-
-  if (modalTitle) modalTitle.innerText = '✏️ Edit Item';
-
-  if (nameInput) {
-    nameInput.value = item.name;
-    nameInput.style.display = 'block';
-  }
-  if (nameSelect) nameSelect.style.display = 'none';
-
+  editingItemId = item.id;
+  document.getElementById('modal-title').innerText = 'Edit Item';
+  document.getElementById('item-name-input').value = item.name;
   document.getElementById('item-category').value = item.category;
   document.getElementById('item-qty').value = item.quantity;
-  document.getElementById('item-unit').value = item.unit || 'pcs';
+  document.getElementById('item-unit').value = item.unit;
 
-  if (modal) {
-    modal.classList.remove('hidden');
-    modal.style.display = 'flex';
-  }
+  document.getElementById('crud-modal').classList.remove('hidden');
 }
 
 function closeModal() {
-  const modal = document.getElementById('crud-modal');
-  if (modal) {
-    modal.classList.add('hidden');
-    modal.style.display = 'none';
-  }
+  document.getElementById('crud-modal').classList.add('hidden');
 }
 
-async function saveItem(e) {
+function saveItem(e) {
   e.preventDefault();
-
-  const name = document.getElementById('item-name-input').value.trim();
-  const category = document.getElementById('item-category').value.trim();
-  const quantity = parseInt(document.getElementById('item-qty').value, 10);
-  const unit = document.getElementById('item-unit').value.trim();
+  const name = document.getElementById('item-name-input').value;
+  const category = document.getElementById('item-category').value;
+  const quantity = parseFloat(document.getElementById('item-qty').value);
+  const unit = document.getElementById('item-unit').value;
 
   if (editingItemId) {
-    currentInventory = currentInventory.map(item =>
-      item.id === editingItemId ? { ...item, name, category, quantity, unit } : item
-    );
+    currentInventory = currentInventory.map(i => i.id === editingItemId ? { ...i, name, category, quantity, unit } : i);
   } else {
-    const newItem = { id: Date.now(), name, category, quantity, unit };
-    currentInventory.push(newItem);
+    currentInventory.push({ id: String(Date.now()), name, category, quantity, unit, status: 'In Stock' });
   }
 
-  renderInventoryTables();
+  renderInventory();
   populateDropdowns();
   closeModal();
-
-  try {
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: editingItemId ? 'updateItem' : 'addItem',
-        id: editingItemId,
-        name,
-        category,
-        quantity,
-        unit
-      })
-    });
-  } catch (err) {
-    console.warn('API Sync issue, local state updated.', err);
-  }
 }
 
-async function deleteItem(id) {
-  if (!confirm('Are you sure you want to delete this item?')) return;
-
-  currentInventory = currentInventory.filter(item => item.id !== id);
-  renderInventoryTables();
-  populateDropdowns();
-
-  try {
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'deleteItem', id })
-    });
-  } catch (err) {
-    console.warn('API Delete issue, local state updated.', err);
-  }
-}
-
-// ================= STOCK MOVEMENTS =================
-
-async function handleTransactionSubmit(e) {
-  e.preventDefault();
-
-  const typeSelect = document.getElementById('trans-type');
-  const itemSelect = document.getElementById('trans-item-select');
-  const quantityInput = document.getElementById('trans-quantity');
-
-  const transactionType = typeSelect ? typeSelect.value : 'IN';
-  const itemName = itemSelect ? itemSelect.value : '';
-  const quantity = quantityInput ? parseFloat(quantityInput.value) : 0;
-
-  if (!itemName || isNaN(quantity) || quantity <= 0) {
-    alert('Please select an item and enter a valid positive quantity.');
+function deleteSelected() {
+  if (!selectedItemId) {
+    alert('Please select an item to delete.');
     return;
   }
-
-  currentInventory.forEach(item => {
-    if (item.name.toLowerCase() === itemName.toLowerCase()) {
-      if (transactionType === 'IN') {
-        item.quantity += quantity;
-      } else {
-        item.quantity = Math.max(0, item.quantity - quantity);
-      }
-    }
-  });
-
-  renderInventoryTables();
-  populateDropdowns();
-
-  try {
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'recordTransaction',
-        type: transactionType,
-        itemName,
-        quantity
-      })
-    });
-  } catch (err) {
-    console.warn('Backend sync issue, recorded locally.', err);
-  }
-
-  e.target.reset();
-  showView('view-dashboard');
-}
-
-// ================= AUTHENTICATION & API =================
-
-let isSubmitting = false;
-
-async function handleLoginSubmit() {
-  if (isSubmitting) return;
-
-  const usernameInput = document.getElementById('login-username');
-  const passwordInput = document.getElementById('login-password');
-  const loginBtn = document.getElementById('login-btn');
-
-  if (!usernameInput || !passwordInput) return;
-
-  const username = usernameInput.value.trim();
-  const password = passwordInput.value.trim();
-
-  if (!username || !password) {
-    alert('Please enter both username and password.');
-    return;
-  }
-
-  try {
-    isSubmitting = true;
-    if (loginBtn) {
-      loginBtn.disabled = true;
-      loginBtn.innerText = 'SENDING OTP...';
-    }
-
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'login', username, password })
-    });
-    const result = await response.json();
-
-    if (result.ok) {
-      document.getElementById('login-step-1').classList.add('hidden');
-      document.getElementById('login-step-2').classList.remove('hidden');
-      alert('Verification code sent to your email!');
-    } else {
-      alert(result.message || 'Invalid credentials.');
-    }
-  } catch (err) {
-    alert('Backend connection error: ' + err.message);
-  } finally {
-    isSubmitting = false;
-    if (loginBtn) {
-      loginBtn.disabled = false;
-      loginBtn.innerText = 'LOGIN';
-    }
-  }
-}
-
-async function handleVerifyOtpSubmit() {
-  const otpInput = document.getElementById('login-otp');
-  if (!otpInput) return;
-
-  const otp = otpInput.value.trim();
-  if (!otp) {
-    alert('Please enter the verification code.');
-    return;
-  }
-
-  try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'verifyOtp', otp })
-    });
-    const result = await response.json();
-
-    if (result.ok) {
-      showView('view-dashboard');
-    } else {
-      alert(result.message || 'Invalid OTP code.');
-    }
-  } catch (err) {
-    alert('Verification error: ' + err.message);
-  }
-}
-
-async function loadInventoryData() {
-  try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'getItems' })
-    });
-    const result = await response.json();
-
-    if (result.ok && result.items) {
-      currentInventory = result.items;
-      renderInventoryTables();
-      populateDropdowns();
-    }
-  } catch (err) {
-    console.error('Error loading inventory:', err);
+  if (confirm('Delete selected item?')) {
+    currentInventory = currentInventory.filter(i => i.id !== selectedItemId);
+    selectedItemId = null;
+    renderInventory();
+    populateDropdowns();
   }
 }
 
