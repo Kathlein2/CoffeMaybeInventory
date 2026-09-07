@@ -3,238 +3,270 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coffee Maybe Inventory System</title>
+  <title>Coffee Maybe Inventory</title>
   <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
 </head>
 <body>
 
   <div id="view-login" class="page-view login-view active">
     <div class="login-card">
       <div class="brand-header">
-        <div style="font-size: 2rem;">☕</div>
-        <h1>COFFEE MAYBE</h1>
-        <p>INVENTORY MANAGER PORTAL</p>
+        <div class="coffee-icon-wrapper">
+          <span class="coffee-emoji">☕</span>
+        </div>
+        <h1>Coffee Maybe</h1>
+        <p>INVENTORY SYSTEM</p>
       </div>
 
       <form id="login-step-1">
         <div class="form-group">
           <label for="login-username">Username</label>
-          <input type="text" id="login-username" value="manager" required>
+          <div class="input-with-icon">
+            <span class="input-icon">👤</span>
+            <input type="text" id="login-username" placeholder="Username" required>
+          </div>
         </div>
         <div class="form-group">
           <label for="login-password">Password</label>
-           <input type="password" id="login-password" placeholder="Enter your password" required>
+          <div class="input-with-icon">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="login-password" placeholder="Password" required>
+          </div>
         </div>
         <button type="submit" id="login-btn" class="btn-sign-in">LOGIN</button>
+        <p class="subtext">A verification code will send after login</p>
       </form>
 
       <form id="login-step-2" class="hidden">
         <div class="form-group">
-          <label for="login-otp">Verification Code</label>
-          <input type="text" id="login-otp" placeholder="Enter 6-digit OTP">
+          <label for="login-otp">VERIFICATION CODE</label>
+          <input type="text" id="login-otp" placeholder="Enter Verification Code">
         </div>
-        <button type="submit" class="btn-sign-in">VERIFY OTP</button>
+        <button type="submit" class="btn-sign-in">VERIFY</button>
       </form>
     </div>
   </div>
 
-  <div id="view-dashboard" class="page-view app-layout">
-    <aside class="sidebar">
-      <div>
-        <div class="brand-header sidebar-header">
-          <h1>Coffee Maybe</h1>
-          <p>INVENTORY SYSTEM</p>
-        </div>
-        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px;">
-          <li><button class="btn-sign-in" onclick="showView('view-dashboard')">📊 Dashboard</button></li>
-          <li><button class="btn-sign-in" onclick="showView('view-inventory')">📦 Inventory</button></li>
-          <li><button class="btn-sign-in" onclick="showView('view-transactions')">🔄 Stock Movements</button></li>
-          <li><button class="btn-sign-in" onclick="showView('view-suppliers')">🚚 Supplier Directory</button></li>
-        </ul>
+  <div id="app-layout" class="app-layout hidden">
+    
+    <header class="mobile-header">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <h2 class="app-title">Coffee Maybe Inventory</h2>
+      <div class="user-avatar">👤</div>
+    </header>
+
+    <nav id="sidebar" class="sidebar">
+      <div class="sidebar-brand">
+        <h3>☕ Coffee Maybe</h3>
       </div>
-      <button class="btn-sign-in" onclick="logout()" style="margin-top: 20px;">🚪 Logout</button>
-    </aside>
+      <ul class="nav-links">
+        <li onclick="navigateTo('view-dashboard')">📊 Dashboard</li>
+        <li onclick="navigateTo('view-inventory')">📦 Inventory</li>
+        <li onclick="navigateTo('view-transactions')">🔄 Stock Movements</li>
+        <li onclick="navigateTo('view-suppliers')">🚚 Supplier Directory</li>
+      </ul>
+      <button class="btn-logout" onclick="logout()">🚪 LOGOUT</button>
+    </nav>
 
     <main class="main-content">
-      <h2>Good evening, Manager! ☕</h2>
-      <div id="stat-total-items" style="font-weight: bold; margin-bottom: 16px;">0 Total Items</div>
-      
-      <div class="table-responsive">
-        <table style="width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; padding: 12px;">
-          <thead>
-            <tr style="border-bottom: 1px solid #ccc; text-align: left;">
-              <th style="padding: 10px;">Item Name</th>
-              <th style="padding: 10px;">Category</th>
-              <th style="padding: 10px;">Quantity</th>
-              <th style="padding: 10px;">Unit</th>
-            </tr>
-          </thead>
-          <tbody id="dashboard-inventory-rows"></tbody>
-        </table>
-      </div>
-    </main>
-  </div>
 
-  <div id="view-inventory" class="page-view app-layout">
-    <aside class="sidebar">
-      <div>
-        <div class="brand-header sidebar-header">
-          <h1>Coffee Maybe</h1>
-          <p>INVENTORY SYSTEM</p>
+      <section id="view-dashboard" class="sub-view">
+        <div class="welcome-banner">
+          <h2>Welcome, Inventory Manager</h2>
         </div>
-        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px;">
-          <li><button class="btn-sign-in" onclick="showView('view-dashboard')">📊 Dashboard</button></li>
-          <li><button class="btn-sign-in" onclick="showView('view-inventory')">📦 Inventory</button></li>
-          <li><button class="btn-sign-in" onclick="showView('view-transactions')">🔄 Stock Movements</button></li>
-          <li><button class="btn-sign-in" onclick="showView('view-suppliers')">🚚 Supplier Directory</button></li>
-        </ul>
-      </div>
-      <button class="btn-sign-in" onclick="logout()" style="margin-top: 20px;">🚪 Logout</button>
-    </aside>
 
-    <main class="main-content">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2>📦 Manage Inventory</h2>
-        <button class="btn-sign-in" onclick="openAddModal()" style="width: auto; padding: 8px 16px;">+ Add Item</button>
-      </div>
-      <div class="table-responsive">
-        <table style="width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px;">
-          <thead>
-            <tr style="border-bottom: 1px solid #ccc; text-align: left;">
-              <th style="padding: 12px;">Item Name</th>
-              <th style="padding: 12px;">Category</th>
-              <th style="padding: 12px;">Quantity</th>
-              <th style="padding: 12px;">Unit</th>
-              <th style="padding: 12px;">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="full-inventory-rows"></tbody>
-        </table>
-      </div>
-    </main>
-  </div>
-
-  <div id="view-transactions" class="page-view app-layout">
-    <aside class="sidebar">
-      <div>
-        <div class="brand-header sidebar-header">
-          <h1>Coffee Maybe</h1>
-          <p>INVENTORY SYSTEM</p>
+        <div class="metrics-container">
+          <div class="metric-card">
+            <span class="metric-icon">📦</span>
+            <div>
+              <p class="metric-label">total items</p>
+              <h3 id="stat-total-items" class="metric-value">24</h3>
+            </div>
+          </div>
+          <div class="metric-card">
+            <span class="metric-icon">⚠️</span>
+            <div>
+              <p class="metric-label">low stock items</p>
+              <h3 id="stat-low-stock" class="metric-value">5</h3>
+            </div>
+          </div>
+          <div class="metric-card">
+            <span class="metric-icon">📋</span>
+            <div>
+              <p class="metric-label">recent transaction</p>
+              <h3 id="stat-recent-trans" class="metric-value">18</h3>
+            </div>
+          </div>
         </div>
-        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px;">
-          <li><button class="btn-sign-in" onclick="showView('view-dashboard')">📊 Dashboard</button></li>
-          <li><button class="btn-sign-in" onclick="showView('view-inventory')">📦 Inventory</button></li>
-          <li><button class="btn-sign-in" onclick="showView('view-transactions')">🔄 Stock Movements</button></li>
-          <li><button class="btn-sign-in" onclick="showView('view-suppliers')">🚚 Supplier Directory</button></li>
-        </ul>
-      </div>
-      <button class="btn-sign-in" onclick="logout()" style="margin-top: 20px;">🚪 Logout</button>
-    </aside>
 
-    <main class="main-content">
-      <div style="background: #fff; border-radius: 12px; padding: 24px; max-width: 520px; box-sizing: border-box;">
-        <h2 style="margin-bottom: 20px;">🔄 Record Stock Movement</h2>
-        <form id="transaction-form">
+        <div class="action-grid">
+          <button class="grid-card" onclick="navigateTo('view-inventory')">
+            <span class="grid-icon">📦</span>
+            <span>INVENTORY</span>
+          </button>
+          <button class="grid-card" onclick="openTransactionModal('IN')">
+            <span class="grid-icon">📥</span>
+            <span>STOCK IN</span>
+          </button>
+          <button class="grid-card" onclick="openTransactionModal('OUT')">
+            <span class="grid-icon">📤</span>
+            <span>STOCK OUT</span>
+          </button>
+          <button class="grid-card" onclick="navigateTo('view-transactions')">
+            <span class="grid-icon">🕒</span>
+            <span>HISTORY</span>
+          </button>
+        </div>
+
+        <button class="btn-dashboard-logout" onclick="logout()">LOGOUT</button>
+      </section>
+
+      <section id="view-inventory" class="sub-view hidden">
+        <div class="view-header">
+          <button class="back-btn" onclick="navigateTo('view-dashboard')">←</button>
+          <h2>Inventory</h2>
+          <button class="add-btn" onclick="openAddModal()">+</button>
+        </div>
+
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="inventory-search" placeholder="Search Item..." onkeyup="filterInventory()">
+        </div>
+
+        <div class="table-responsive">
+          <table class="mobile-table">
+            <thead>
+              <tr>
+                <th>ITEM NAME</th>
+                <th>QTY</th>
+                <th>UNIT</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-table-body">
+              </tbody>
+          </table>
+        </div>
+
+        <div class="inventory-actions">
+          <button class="btn-action" onclick="openAddModal()">➕ ADD</button>
+          <button class="btn-action" onclick="openSelectedEdit()">✏️ EDIT</button>
+          <button class="btn-action btn-delete" onclick="deleteSelected()">🗑️ DELETE</button>
+        </div>
+      </section>
+
+      <section id="view-transactions" class="sub-view hidden">
+        <div class="view-header">
+          <button class="back-btn" onclick="navigateTo('view-dashboard')">←</button>
+          <h2>Inventory Transaction</h2>
+        </div>
+
+        <form id="transaction-form" class="card-form">
           <div class="form-group">
-            <label style="color: #2c221e;">Movement Type</label>
+            <label>SELECT ITEM</label>
+            <select id="trans-item-select" required></select>
+          </div>
+
+          <div class="form-group row">
+            <div>
+              <label>QUANTITY</label>
+              <input type="number" id="trans-quantity" value="1" min="1" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>TRANSACTION TYPE</label>
             <select id="trans-type">
-              <option value="IN">📥 Stock In (Receive Items)</option>
-              <option value="OUT">📤 Stock Out (Use / Dispense Items)</option>
+              <option value="OUT">Stock Out</option>
+              <option value="IN">Stock In</option>
             </select>
           </div>
+
           <div class="form-group">
-            <label style="color: #2c221e;">Select Item</label>
-            <select id="trans-item-select" required>
-              </select>
+            <label>REASON</label>
+            <select id="trans-reason">
+              <option value="Drink preparation">Drink preparation</option>
+              <option value="New Delivery">New Delivery</option>
+              <option value="Damaged/Expired">Damaged/Expired</option>
+            </select>
           </div>
-          <div class="form-group">
-            <label style="color: #2c221e;">Quantity</label>
-            <input type="number" id="trans-quantity" placeholder="Enter quantity" required min="1">
+
+          <div class="stock-summary">
+            <div class="summary-box">
+              <span>CURRENT STOCK</span>
+              <strong id="summary-current">5 L</strong>
+            </div>
+            <div class="summary-box">
+              <span>UPDATED STOCK</span>
+              <strong id="summary-updated">3 L</strong>
+            </div>
           </div>
-          <button type="submit" class="btn-sign-in">RECORD MOVEMENT</button>
+
+          <button type="submit" class="btn-sign-in">SUBMIT TRANSACTION</button>
         </form>
-      </div>
-    </main>
-  </div>
+      </section>
 
-  <div id="view-suppliers" class="page-view app-layout">
-    <aside class="sidebar">
-      <div>
-        <div class="brand-header sidebar-header">
-          <h1>Coffee Maybe</h1>
-          <p>INVENTORY SYSTEM</p>
+      <section id="view-suppliers" class="sub-view hidden">
+        <div class="view-header">
+          <button class="back-btn" onclick="navigateTo('view-dashboard')">←</button>
+          <h2>Supplier Directory</h2>
         </div>
-        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px;">
-          <li><button class="btn-sign-in" onclick="showView('view-dashboard')">📊 Dashboard</button></li>
-          <li><button class="btn-sign-in" onclick="showView('view-inventory')">📦 Inventory</button></li>
-          <li><button class="btn-sign-in" onclick="showView('view-transactions')">🔄 Stock Movements</button></li>
-          <li><button class="btn-sign-in" onclick="showView('view-suppliers')">🚚 Supplier Directory</button></li>
-        </ul>
-      </div>
-      <button class="btn-sign-in" onclick="logout()" style="margin-top: 20px;">🚪 Logout</button>
-    </aside>
+        <div class="table-responsive">
+          <table class="mobile-table">
+            <thead>
+              <tr>
+                <th>SUPPLIER</th>
+                <th>CONTACT</th>
+                <th>ITEM</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Bean Supplier Co.</td>
+                <td>+63 912 345 6789</td>
+                <td>Coffee Beans</td>
+              </tr>
+              <tr>
+                <td>Fresh Dairy Farm</td>
+                <td>+63 998 765 4321</td>
+                <td>Milk & Cream</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-    <main class="main-content">
-      <h2>🚚 Supplier Directory</h2>
-      <div class="table-responsive">
-        <table style="width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px;">
-          <thead>
-            <tr style="border-bottom: 1px solid #ccc; text-align: left;">
-              <th style="padding: 12px;">Supplier Name</th>
-              <th style="padding: 12px;">Category</th>
-              <th style="padding: 12px;">Contact Person</th>
-              <th style="padding: 12px;">Phone Number</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style="padding: 12px;">Highland Roasters Inc.</td>
-              <td style="padding: 12px;">Coffee Beans</td>
-              <td style="padding: 12px;">Kiki Delivery</td>
-              <td style="padding: 12px;">+63 917 555 0192</td>
-            </tr>
-            <tr>
-              <td style="padding: 12px;">Fresh Farms Dairy</td>
-              <td style="padding: 12px;">Dairy Products</td>
-              <td style="padding: 12px;">Howl Pendragon</td>
-              <td style="padding: 12px;">+63 918 555 0143</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
     </main>
   </div>
 
-  <div id="crud-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 9999;">
-    <div style="background: #fff; padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; color: #2c221e; box-sizing: border-box;">
-      <h3 id="modal-title" style="margin-bottom: 16px;">Add / Edit Item</h3>
+  <div id="crud-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="modal-title">Add / Edit Item</h3>
       <form id="item-form">
         <div class="form-group">
           <label>Item Name</label>
-          <select id="item-name-select" required style="display: none;">
-            </select>
-          <input type="text" id="item-name-input" placeholder="e.g. Arabica Beans" required>
+          <input type="text" id="item-name-input" placeholder="e.g. Fresh Milk" required>
         </div>
         <div class="form-group">
           <label>Category</label>
-          <input type="text" id="item-category" required placeholder="e.g. Coffee Beans">
+          <input type="text" id="item-category" placeholder="e.g. Dairy" required>
         </div>
         <div class="form-group">
           <label>Quantity</label>
-          <input type="number" id="item-qty" required placeholder="e.g. 10">
+          <input type="number" id="item-qty" placeholder="e.g. 10" required>
         </div>
         <div class="form-group">
           <label>Unit</label>
-          <input type="text" id="item-unit" required placeholder="e.g. kg, L, packs">
+          <input type="text" id="item-unit" placeholder="e.g. kg, L, packs" required>
         </div>
-        <div style="display: flex; gap: 10px; margin-top: 16px;">
+        <div class="modal-buttons">
           <button type="submit" class="btn-sign-in">Save</button>
-          <button type="button" class="btn-sign-in" onclick="closeModal()" style="background: #7a6e65;">Cancel</button>
+          <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
         </div>
       </form>
     </div>
   </div>
 
-  <script src="app.js"></script>
 </body>
 </html>
