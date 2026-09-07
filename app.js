@@ -37,6 +37,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderInventoryTables();
   populateDropdowns();
+  if (dashRows) {
+    dashRows.innerHTML = currentInventory.map(item => `
+      <tr style="border-bottom: 1px solid #f2ebe4;">
+        <td style="padding: 12px 10px; font-weight: 600;">${item.name}</td>
+        <td style="padding: 12px 10px; color: #666;">${item.category}</td>
+        <td style="padding: 12px 10px;">${item.quantity}</td>
+        <td style="padding: 12px 10px;">${item.unit || 'pcs'}</td>
+        <td style="padding: 12px 10px;">
+          <button onclick="openEditModal('${item.id}')" style="background: #8b5a36; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-right: 4px;">✏️ Edit</button>
+          <button onclick="deleteItem('${item.id}')" style="background: #a93226; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">🗑️ Delete</button>
+        </td>
+      </tr>
+    `).join('');
+  }
 });
 
 // Navigation Controller
