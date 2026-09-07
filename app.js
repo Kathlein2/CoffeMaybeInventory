@@ -11,13 +11,21 @@ let selectedItemId = null;
 let editingItemId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-  const step1 = document.getElementById('login-step-1');
-  if (step1) step1.addEventListener('submit', (e) => {
-    e.preventDefault();
-    document.getElementById('view-login').classList.add('hidden');
-    document.getElementById('app-layout').classList.remove('hidden');
-    renderInventory();
-  });
+  const step1Form = document.getElementById('login-step-1');
+  if (step1Form) {
+    step1Form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Hide Step 1 and reveal Step 2 (Verification Code)
+      step1Form.classList.add('hidden');
+      const step2Form = document.getElementById('login-step-2');
+      if (step2Form) step2Form.classList.remove('hidden');
+    });
+  }
+
+  const step2Form = document.getElementById('login-step-2');
+  if (step2Form) {
+    step2Form.addEventListener('submit', (e) => handleVerifyOtpSubmit(e));
+  }
 
   const transForm = document.getElementById('transaction-form');
   if (transForm) transForm.addEventListener('submit', handleTransaction);
@@ -27,6 +35,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderInventory();
   populateDropdowns();
+});
+
+// Missing handleVerifyOtpSubmit function
+function handleVerifyOtpSubmit(e) {
+  if (e) e.preventDefault();
+
+  const otpInput = document.getElementById('login-otp');
+  const otp = otpInput ? otpInput.value.trim() : '';
+
+  if (!otp) {
+    alert('Please enter the verification code.');
+    return;
+  }
+
+  // Hide Login View and reveal Main App
+  document.getElementById('view-login').classList.add('hidden');
+  document.getElementById('app-layout').classList.remove('hidden');
+  renderInventory();
 });
 
 function navigateTo(viewId) {
