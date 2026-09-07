@@ -35,23 +35,39 @@ document.addEventListener('DOMContentLoaded', () => {
     itemForm.addEventListener('submit', saveItem);
   }
 
+ function openEditModal(id) {
+  const item = currentInventory.find(i => String(i.id) === String(id));
+  if (!item) return;
+
+  editingItemId = String(id);
+  
+  // Fill modal inputs with existing data
+  const nameInput = document.getElementById('item-name-input');
+  const catInput = document.getElementById('item-category');
+  const qtyInput = document.getElementById('item-qty');
+  const unitInput = document.getElementById('item-unit');
+
+  if (nameInput) nameInput.value = item.name;
+  if (catInput) catInput.value = item.category;
+  if (qtyInput) qtyInput.value = item.quantity;
+  if (unitInput) unitInput.value = item.unit || 'pcs';
+
+  const modal = document.getElementById('crud-modal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+  }
+}
+
+function deleteItem(id) {
+  if (!confirm('Are you sure you want to delete this item?')) return;
+
+  currentInventory = currentInventory.filter(item => String(item.id) !== String(id));
+  
+  // Refresh UI tables and dropdowns
   renderInventoryTables();
   populateDropdowns();
-  if (dashRows) {
-    dashRows.innerHTML = currentInventory.map(item => `
-      <tr style="border-bottom: 1px solid #f2ebe4;">
-        <td style="padding: 12px 10px; font-weight: 600;">${item.name}</td>
-        <td style="padding: 12px 10px; color: #666;">${item.category}</td>
-        <td style="padding: 12px 10px;">${item.quantity}</td>
-        <td style="padding: 12px 10px;">${item.unit || 'pcs'}</td>
-        <td style="padding: 12px 10px;">
-          <button onclick="openEditModal('${item.id}')" style="background: #8b5a36; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-right: 4px;">✏️ Edit</button>
-          <button onclick="deleteItem('${item.id}')" style="background: #a93226; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">🗑️ Delete</button>
-        </td>
-      </tr>
-    `).join('');
-  }
-});
+}
 
 // Navigation Controller
 function showView(viewId) {
